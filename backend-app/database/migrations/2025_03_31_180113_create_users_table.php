@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('username', 30)->unique()->nullable(false);
             $table->string('email',100)->unique()->nullable(false);
             $table->string('password',100)->nullable(false);
-            $table->boolean('status')->nullable();
+            $table->string('status', 30)->nullable();
             $table->string('about_me', 100)->nullable();
             $table->boolean('is_online')->default(false);
             $table->string('token',100)->unique()->nullable();
