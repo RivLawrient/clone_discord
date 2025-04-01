@@ -22,7 +22,7 @@ class UserController extends Controller
         $user->is_online = false;
         $user->password = Hash::make($data['password']);
         $user->token = Str::uuid();
-        $user->token_exp = time() + 20;
+        $user->token_exp = time() + 60 * 24;
         $user->save();
         return response()->json([
             'user' => new UserResource($user)
@@ -42,12 +42,19 @@ class UserController extends Controller
         }
 
         $user->token = Str::uuid();
-        $user->token_exp = time() + 20;
+        $user->token_exp = time() + 60 * 24;
         $user->save();
         
         return response()->json([
             'user' => new UserResource($user)
         ])->withCookie(cookie('session', $user->token, 60 * 24));
+    }
+
+    public function logout(Request $request): JsonResponse {
+
+        return response()->json([
+            'message' => 'Logged out successfully'
+        ])->setStatusCode(200)->withCookie(cookie('session', '', 0));
     }
 
     public function user(Request $request): UserResource {

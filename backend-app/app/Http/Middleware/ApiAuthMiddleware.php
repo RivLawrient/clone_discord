@@ -20,10 +20,11 @@ class ApiAuthMiddleware
         $authenticate = false;
 
         if($token) {
-            $user = User::where('token', $token)->first();;
-
-            if ($user->token_exp > time()) {
-                $authenticate = true;
+            $user = User::where('token', $token)->first();
+            if ($user) {
+                if ($user->token_exp > time()) {
+                    $authenticate = true;
+                }
             }
         }
 
@@ -37,7 +38,8 @@ class ApiAuthMiddleware
                         "unauthorized"
                     ]
                 ]
-            ])->setStatusCode(401)->withCookie(cookie('session', '', 0));
+            ])->setStatusCode(401)
+            ->withCookie(cookie('session', '', 0));
         }
     }
 }
