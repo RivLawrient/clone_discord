@@ -30,6 +30,7 @@ class ApiAuthMiddleware
         if ($authenticate) {
             return $next($request);
         } else {
+            User::where('token', $token)->update(['token' => null, 'token_exp' => null]);
             return response()->json([
                 "errors" => [
                     "message" => [

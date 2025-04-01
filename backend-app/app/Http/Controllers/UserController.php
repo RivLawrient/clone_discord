@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -23,6 +24,27 @@ class UserController extends Controller
         $user->token = Str::uuid();
         $user->token_exp = time() + 20;
         $user->save();
+        return response()->json([
+            'user' => new UserResource($user)
+        ])->withCookie(cookie('session', $user->token, 60 * 24));
+    }
+
+    public function login(UserLoginRequest $request): JsonResponse {
+        $data = $request->validated();
+        
+        $user = User::where('email', $data['email'])->first();
+        if(!$user || !Hash::check($data['password'], $user->password)) {
+            return response()->json([
+                'errors' => [
+                    'message' => ['Invalid credentials']
+                ]
+            ])->setStatusCode(401);
+        }
+
+        $user->token = Str::uuid();
+        $user->token_exp = time() + 20;
+        $user->save();
+        
         return response()->json([
             'user' => new UserResource($user)
         ])->withCookie(cookie('session', $user->token, 60 * 24));
