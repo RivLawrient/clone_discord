@@ -18,6 +18,6 @@ class UserTest extends TestCase
             'username' => 'johndoe',
             'email' => 'johndoe@example.com',
             'password' => 'password',
-        ])->assertStatus(201);
+        ])->assertStatus(201)->assertCookie('session');
     } 
 }

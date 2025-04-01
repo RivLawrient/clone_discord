@@ -26,7 +26,7 @@ class UserController extends Controller
         $user->save();
         return response()->json([
             'user' => new UserResource($user)
-        ])->withCookie(cookie('session', $user->token, 60 * 24));
+        ])->withCookie(cookie('session', $user->token, 60 * 24))->setStatusCode(201);
     }
 
     public function login(UserLoginRequest $request): JsonResponse {
