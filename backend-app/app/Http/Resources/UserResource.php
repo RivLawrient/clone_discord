@@ -23,6 +23,7 @@ class UserResource extends JsonResource
             'about_me' => $this->about_me,
             'is_online' => $this->is_online,
             'token' => $this->token,
+            'token_exp' => $this->token_exp,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

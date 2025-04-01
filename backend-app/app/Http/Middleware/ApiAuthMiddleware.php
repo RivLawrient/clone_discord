@@ -2,12 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Models\User;
 use Closure;
-use Firebase\JWT\ExpiredException;
-use Firebase\JWT\JWT;
-use Firebase\JWT\Key;
 use Illuminate\Http\Request;
-use stdClass;
 use Symfony\Component\HttpFoundation\Response;
 
 class ApiAuthMiddleware
@@ -23,19 +20,10 @@ class ApiAuthMiddleware
         $authenticate = false;
 
         if($token) {
-            $authenticate = true;
+            $user = User::where('token', $token)->first();;
 
-            try {
-                JWT::decode($token, new Key(env('JWT_SECRET'), 'HS256'));
-    
-            }catch (ExpiredException $e) {
-                return response()->json([
-                    "errors" => [
-                        "message" => [
-                            $e->getMessage()
-                        ]
-                    ]
-                ])->setStatusCode(401);
+            if ($user->token_exp > time()) {
+                $authenticate = true;
             }
         }
 
