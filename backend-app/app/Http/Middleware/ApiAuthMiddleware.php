@@ -36,7 +36,7 @@ class ApiAuthMiddleware
                         "unauthorized"
                     ]
                 ]
-            ])->setStatusCode(401);
+            ])->setStatusCode(401)->withCookie(cookie('session', '', 0));
         }
     }
 }
