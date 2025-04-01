@@ -1,5 +1,7 @@
 "use client";
 
+import { cookies } from "next/headers";
+import { redirect } from "next/navigation";
 import {
   createContext,
   ReactNode,
@@ -25,7 +27,7 @@ interface User {
 interface AuthContextType {
   user: User | null;
   //   loading: boolean;
-  //   logout: () => void;
+  logout: () => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
@@ -36,19 +38,38 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
-    console.log("ini user", user);
     if (!user) {
       fetch(`${process.env.HOST_API_PUBLIC}/api/user`, {
+        method: "GET",
         credentials: "include",
       })
-        .then((res) => res.json())
+        .then((res) => {
+          if (res.ok) {
+            return res.json();
+          } else if (res.status === 401) {
+            console.log("gaagl");
+            redirect("/login");
+          }
+          return null;
+        })
         .then((data) => {
-          setUser(data);
+          setUser(data.data);
         });
     }
   }, []);
+
+  const logout = () => {
+    fetch(`${process.env.HOST_API_PUBLIC}/api/logout`, {
+      method: "POST",
+      credentials: "include",
+    });
+    redirect("/login");
+  };
+
   return (
-    <AuthContext.Provider value={{ user }}>{children}</AuthContext.Provider>
+    <AuthContext.Provider value={{ user, logout }}>
+      {children}
+    </AuthContext.Provider>
   );
 };
 

@@ -1,3 +1,4 @@
+import DisableRightClick from "@/components/DisableRightClick";
 import { AuthProvider } from "@/context/authContext";
 import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
@@ -14,6 +15,7 @@ export default async function MainLayout({
   }
   return (
     <AuthProvider>
+      <DisableRightClick />
       <div className="">main layout{children}</div>
     </AuthProvider>
   );
