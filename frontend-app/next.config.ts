@@ -1,7 +1,9 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  env: {
+    HOST_API_PUBLIC: process.env.HOST_API_PUBLIC,
+  },
 };
 
 export default nextConfig;
