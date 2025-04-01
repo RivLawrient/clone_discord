@@ -24,6 +24,4 @@ class User extends Model
         'is_online',
         'token'
     ];
-    
-    
 }

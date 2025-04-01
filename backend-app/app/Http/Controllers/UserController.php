@@ -14,6 +14,7 @@ class UserController extends Controller
         $data = $request->validated();
     
         $user = User::create($data);
+        $user->is_online = false;
         $user->password = Hash::make($data['password']);
         $user->save();
 

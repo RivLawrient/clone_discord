@@ -19,7 +19,7 @@ return new class extends Migration
             $table->string('password',100)->nullable(false);
             $table->string('status', 30)->nullable();
             $table->string('about_me', 100)->nullable();
-            $table->boolean('is_online')->default(false);
+            $table->boolean('is_online')->default(false)->nullable(false);
             $table->string('token',100)->unique()->nullable();
             $table->timestamps();
         });

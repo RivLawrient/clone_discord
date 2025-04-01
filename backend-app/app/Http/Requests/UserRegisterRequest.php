@@ -26,7 +26,12 @@ class UserRegisterRequest extends FormRequest
         return [
             'display_name' => 'required|string|max:30',
             'username' => 'required|string|max:30|alpha_num|unique:users,username',
-            'email' => 'required|email|unique:users,email',
+            'email' => [
+                'required',
+                'email',
+                'unique:users,email',
+                'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
+            ],
             'password' => 'required|string|min:8',
         ];
     }
