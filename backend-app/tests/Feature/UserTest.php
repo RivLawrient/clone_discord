@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use Date;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -18,6 +19,7 @@ class UserTest extends TestCase
             'username' => 'johndoe',
             'email' => 'johndoe@example.com',
             'password' => 'password',
+            'date_of_birth' => time(),
         ])->assertStatus(201)->assertCookie('session');
     } 
 }

@@ -20,6 +20,7 @@ class User extends Model
         'username',
         'email',
         'password',
+        'date_of_birth',
         'status',
         'about_me',
         'is_online',

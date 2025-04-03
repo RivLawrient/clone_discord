@@ -33,6 +33,7 @@ class UserRegisterRequest extends FormRequest
                 'regex:/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/'
             ],
             'password' => 'required|string|min:8',
+            'date_of_birth' => 'required|date',
         ];
     }
 

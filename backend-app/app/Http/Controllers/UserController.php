@@ -13,8 +13,7 @@ use Str;
 
 class UserController extends Controller
 {
-    public function register(UserRegisterRequest $request): JsonResponse 
-    {
+    public function register(UserRegisterRequest $request): JsonResponse {
         $data = $request->validated();
 
     
@@ -22,7 +21,8 @@ class UserController extends Controller
         $user->is_online = false;
         $user->password = Hash::make($data['password']);
         $user->token = Str::uuid();
-        $user->token_exp = time() + 60 * 24;
+        $user->token_exp = time() + 60 * 24; 
+        $user->picture = '/api/user_picture/default_picture.png';
         $user->save();
         return response()->json([
             'user' => new UserResource($user)
@@ -51,17 +51,27 @@ class UserController extends Controller
     }
 
     public function logout(Request $request): JsonResponse {
-
         return response()->json([
             'message' => 'Logged out successfully'
         ])->setStatusCode(200)->withCookie(cookie('session', '', 0));
     }
 
     public function user(Request $request): UserResource {
-        
         $token = $request->cookie('session');
 
         $user = User::where('token', $token)->first();
+        $user->picture = request()->getSchemeAndHttpHost() . $user->picture;
         return new UserResource($user);
     }
+
+    public function user_picture($filename) {
+        $path = storage_path('app/public/' . $filename);
+        
+        if (!file_exists($path)) {
+            return response()->json(['message' => 'File not found'], 404);
+        }
+        
+        return response()->file($path);
+    }
+    
 }
