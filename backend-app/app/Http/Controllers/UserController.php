@@ -15,7 +15,6 @@ class UserController extends Controller
 {
     public function register(UserRegisterRequest $request): JsonResponse {
         $data = $request->validated();
-
     
         $user = User::create($data);
         $user->is_online = false;
@@ -68,7 +67,11 @@ class UserController extends Controller
         $path = storage_path('app/public/' . $filename);
         
         if (!file_exists($path)) {
-            return response()->json(['message' => 'File not found'], 404);
+            return response()->json([
+                'errors' => [
+                    'message' => ['File not found']
+                ]
+            ])->setStatusCode(404);
         }
         
         return response()->file($path);
