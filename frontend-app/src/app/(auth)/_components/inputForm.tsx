@@ -7,6 +7,7 @@ interface InputFormProps {
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
   error: string;
   isRequired?: boolean;
+  disabled?: boolean;
 }
 
 export default function inputForm({
@@ -16,6 +17,7 @@ export default function inputForm({
   onChange,
   error,
   isRequired = false,
+  disabled = false,
 }: InputFormProps) {
   return (
     <div className="flex flex-col gap-2 pt-4">
@@ -29,14 +31,15 @@ export default function inputForm({
       </label>
       <input
         type={type}
+        maxLength={100}
         value={value}
         onChange={onChange}
+        disabled={disabled}
         className={cn(
           "bg-transparent border border-gray-800 rounded-lg p-2 focus:border-blue-500 focus:outline-none transition-all",
           error && "border-red-500"
         )}
       />
-      
     </div>
   );
 }

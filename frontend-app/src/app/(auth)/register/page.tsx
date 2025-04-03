@@ -1,8 +1,7 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import SubmitBtnForm from "../_components/submitBtnForm";
 import InputForm from "../_components/inputForm";
-import { useRouter } from "next/navigation";
 import {
   Select,
   SelectContent,
@@ -14,79 +13,11 @@ import {
 } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
+import userRegister from "./userRegister";
+
 export default function RegisterPage() {
-  const [formData, setFormData] = useState({
-    email: "",
-    display_name: "",
-    username: "",
-    password: "",
-    date_of_birth: {
-      month: 0,
-      day: 0,
-      year: 0,
-    },
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-  const router = useRouter();
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setError("");
-    if (
-      formData.date_of_birth.month === 0 ||
-      formData.date_of_birth.day === 0 ||
-      formData.date_of_birth.year === 0
-    ) {
-      setError("Date of birth is required");
-    } else {
-      setLoading(true);
-      await fetch("http://127.0.0.1:8000/api/register", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          display_name: formData.display_name,
-          username: formData.username,
-          email: formData.email,
-          password: formData.password,
-          date_of_birth: `${formData.date_of_birth.year}-${formData.date_of_birth.month}-${formData.date_of_birth.day}`,
-        }),
-        credentials: "include",
-      }).then(async (res) => {
-        const data = await res.json();
-        if (res.ok) {
-          router.push("/");
-        } else if (res.status === 400) {
-          if (data.errors.email) {
-            setError(data.errors.email);
-            setLoading(false);
-            return;
-          } else if (data.errors.display_name) {
-            setError(data.errors.display_name[0]);
-            setLoading(false);
-            return;
-          } else if (data.errors.username) {
-            setError(data.errors.username[0]);
-            setLoading(false);
-          } else if (data.errors.password) {
-            setError(data.errors.password[0]);
-            setLoading(false);
-            return;
-          } else if (data.errors.date_of_birth) {
-            setError(data.errors.date_of_birth[0]);
-            setLoading(false);
-            return;
-          }
-        } else {
-          setError("Something went wrong");
-          setLoading(false);
-        }
-      });
-    }
-  };
+  const { formData, setFormData, error, loading, setLoading, handleSubmit } =
+    userRegister();
 
   useEffect(() => {
     setLoading(false);
@@ -111,6 +42,7 @@ export default function RegisterPage() {
             }
             error={error}
             isRequired={true}
+            disabled={loading}
           />
           <InputForm
             label="DISPLAY NAME"
@@ -120,6 +52,7 @@ export default function RegisterPage() {
               setFormData({ ...formData, display_name: e.target.value })
             }
             error={error}
+            disabled={loading}
           />
           <InputForm
             label="USERNAME"
@@ -130,6 +63,7 @@ export default function RegisterPage() {
             }
             error={error}
             isRequired={true}
+            disabled={loading}
           />
           <InputForm
             label="PASSWORD"
@@ -140,6 +74,7 @@ export default function RegisterPage() {
             }
             error={error}
             isRequired={true}
+            disabled={loading}
           />
 
           <div className="flex flex-col pt-4 w-full">

@@ -1,44 +1,13 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { cn } from "@/lib/utils";
+import { useEffect } from "react";
 import InputForm from "../_components/inputForm";
 import SubmitBtnForm from "../_components/submitBtnForm";
+import useLogin from "./useLogin";
 
 export default function LoginPage() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-  const [error, setError] = useState("");
-  const [loading, setLoading] = useState(true);
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setError("");
-    setLoading(true);
-    await fetch("http://127.0.0.1:8000/api/login", {
-      method: "PUT",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(formData),
-      credentials: "include",
-    }).then(async (res) => {
-      if (res.ok) {
-        router.push("/");
-      } else if (res.status === 400) {
-        setError("Email or password is incorrect");
-        setLoading(false);
-      } else if (res.status === 401) {
-        setError("Unauthorized");
-        setLoading(false);
-      }
-    });
-  };
+  const { formData, setFormData, error, loading, setLoading, handleSubmit } =
+    useLogin();
 
   useEffect(() => {
     setLoading(false);
@@ -71,6 +40,7 @@ export default function LoginPage() {
             }
             error={error}
             isRequired={true}
+            disabled={loading}
           />
           <InputForm
             label="PASSWORD"
@@ -81,9 +51,10 @@ export default function LoginPage() {
             }
             error={error}
             isRequired={true}
+            disabled={loading}
           />
 
-          <a href="" className="text-xs text-blue-500 mt-1 font-semibold">
+          <a className="text-xs text-blue-500 mt-1 font-semibold cursor-not-allowed">
             Forgot your password?
           </a>
 
