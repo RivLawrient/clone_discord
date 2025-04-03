@@ -2,6 +2,9 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { cn } from "@/lib/utils";
+import InputForm from "../_components/inputForm";
+import SubmitBtnForm from "../_components/submitBtnForm";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -13,86 +16,78 @@ export default function LoginPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    try {
-      const response = await fetch("http://127.0.0.1:8000/api/login", {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(formData),
-        credentials: "include",
-      });
 
-      if (!response.ok) {
-        throw new Error("Login gagal");
+    setError("");
+    await fetch("http://127.0.0.1:8000/api/login", {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(formData),
+      credentials: "include",
+    }).then(async (res) => {
+      const data = await res.json();
+      if (res.ok) {
+        router.push("/");
+      } else if (res.status === 400) {
+        setError("Email or password is incorrect");
+      } else if (res.status === 401) {
+        setError("Unauthorized");
       }
-
-      const data = await response.json();
-      // Setelah login berhasil, redirect ke halaman utama
-      router.push("/");
-    } catch (err) {
-      setError("Username atau password salah");
-    }
+    });
   };
 
   return (
     <div className="min-h-screen flex items-center justify-center">
-      <div className="bg-accent-foreground p-8 rounded-lg shadow-lg w-96">
-        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">
-          Login
+      <div className="bg-accent-foreground p-10 rounded-lg text-white flex flex-col items-center min-w-[500px] animate-in slide-in-from-top-20 duration-700">
+        <h1 className="text-xl font-bold">Welcome back!</h1>
+        <h1 className="text-sm text-gray-400 pt-1.5 pb-4">
+          We're so excited to see you again!
         </h1>
 
-        {error && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-            {error}
-          </div>
-        )}
+        <form
+          onSubmit={handleSubmit}
+          className="flex flex-col w-full"
+          autoComplete="on"
+        >
+          {error && (
+            <div className="bg-red-500/10 border border-red-500 text-red-500 text-xs p-2 rounded-lg  transition-all">
+              {error}
+            </div>
+          )}
+          <InputForm
+            label="EMAIL"
+            type="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            error={error}
+            isRequired={true}
+          />
+          <InputForm
+            label="PASSWORD"
+            type="password"
+            value={formData.password}
+            onChange={(e) =>
+              setFormData({ ...formData, password: e.target.value })
+            }
+            error={error}
+            isRequired={true}
+          />
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label
-              htmlFor="email"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Email
-            </label>
-            <input
-              type="text"
-              id="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <a href="" className="text-xs text-blue-500 mt-1 font-semibold">
+            Forgot your password?
+          </a>
 
-          <div>
-            <label
-              htmlFor="password"
-              className="block text-sm font-medium text-gray-700"
-            >
-              Password
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={formData.password}
-              onChange={(e) =>
-                setFormData({ ...formData, password: e.target.value })
-              }
-              className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500"
-              required
-            />
-          </div>
+          <SubmitBtnForm text="Log in" />
 
-          <button
-            type="submit"
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-          >
-            Login
-          </button>
+          <h1 className="text-xs text-gray-400 pt-4">
+            Don't have an account?{" "}
+            <a href="/register" className="text-blue-500 hover:underline">
+              Register
+            </a>
+          </h1>
         </form>
       </div>
     </div>

@@ -18,6 +18,7 @@ interface User {
   status: string;
   about_me: string;
   is_online: boolean;
+  picture: string;
   token: string;
   token_exp: string;
   created_at: string;
@@ -26,7 +27,7 @@ interface User {
 
 interface AuthContextType {
   user: User | null;
-  //   loading: boolean;
+  loading: boolean;
   logout: () => void;
 }
 
@@ -36,6 +37,7 @@ export const AuthContext = createContext<AuthContextType | undefined>(
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     if (!user) {
@@ -54,6 +56,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
         .then((data) => {
           setUser(data.data);
+          setLoading(false);
         });
     }
   }, []);
@@ -67,7 +70,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout }}>
+    <AuthContext.Provider value={{ user, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );
