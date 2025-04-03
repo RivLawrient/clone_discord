@@ -1,6 +1,5 @@
 "use client";
 
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import {
   createContext,
@@ -49,13 +48,14 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
           if (res.ok) {
             return res.json();
           } else if (res.status === 401) {
-            console.log("gaagl");
             redirect("/login");
           }
           return null;
         })
         .then((data) => {
           setUser(data.data);
+        })
+        .finally(() => {
           setLoading(false);
         });
     }

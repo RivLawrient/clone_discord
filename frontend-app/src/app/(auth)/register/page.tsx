@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import SubmitBtnForm from "../_components/submitBtnForm";
 import InputForm from "../_components/inputForm";
 import { useRouter } from "next/navigation";
@@ -27,20 +27,11 @@ export default function RegisterPage() {
     },
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-
-    console.log(
-      formData,
-      new Date(
-        formData.date_of_birth.year,
-        formData.date_of_birth.month,
-        formData.date_of_birth.day
-      ).toLocaleDateString(),
-      new Date().toISOString()
-    );
 
     setError("");
     if (
@@ -50,6 +41,7 @@ export default function RegisterPage() {
     ) {
       setError("Date of birth is required");
     } else {
+      setLoading(true);
       await fetch("http://127.0.0.1:8000/api/register", {
         method: "POST",
         headers: {
@@ -65,17 +57,40 @@ export default function RegisterPage() {
         credentials: "include",
       }).then(async (res) => {
         const data = await res.json();
-
         if (res.ok) {
           router.push("/");
         } else if (res.status === 400) {
-          setError("Email or password is incorrect");
-        } else if (res.status === 401) {
-          setError("Unauthorized");
+          if (data.errors.email) {
+            setError(data.errors.email);
+            setLoading(false);
+            return;
+          } else if (data.errors.display_name) {
+            setError(data.errors.display_name[0]);
+            setLoading(false);
+            return;
+          } else if (data.errors.username) {
+            setError(data.errors.username[0]);
+            setLoading(false);
+          } else if (data.errors.password) {
+            setError(data.errors.password[0]);
+            setLoading(false);
+            return;
+          } else if (data.errors.date_of_birth) {
+            setError(data.errors.date_of_birth[0]);
+            setLoading(false);
+            return;
+          }
+        } else {
+          setError("Something went wrong");
+          setLoading(false);
         }
       });
     }
   };
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
   return (
     <div className="min-h-screen flex items-center justify-center">
       <div className="bg-accent-foreground p-10 rounded-lg text-white flex flex-col items-center max-w-[500px] animate-in slide-in-from-top-20 duration-700">
@@ -231,7 +246,7 @@ export default function RegisterPage() {
               and special offers. You can opt out at any time.
             </Label>
           </div>
-          <SubmitBtnForm text="Register" />
+          <SubmitBtnForm text="Register" loading={loading} />
           <h1 className="text-xs text-gray-400 font-semib old mt-2">
             By signing up, you agree to our{" "}
             <a href="/terms" className="text-blue-500 hover:underline">

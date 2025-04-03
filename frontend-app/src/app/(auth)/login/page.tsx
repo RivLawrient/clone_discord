@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { cn } from "@/lib/utils";
 import InputForm from "../_components/inputForm";
@@ -13,11 +13,13 @@ export default function LoginPage() {
     password: "",
   });
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(true);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     setError("");
+    setLoading(true);
     await fetch("http://127.0.0.1:8000/api/login", {
       method: "PUT",
       headers: {
@@ -26,16 +28,21 @@ export default function LoginPage() {
       body: JSON.stringify(formData),
       credentials: "include",
     }).then(async (res) => {
-      const data = await res.json();
       if (res.ok) {
         router.push("/");
       } else if (res.status === 400) {
         setError("Email or password is incorrect");
+        setLoading(false);
       } else if (res.status === 401) {
         setError("Unauthorized");
+        setLoading(false);
       }
     });
   };
+
+  useEffect(() => {
+    setLoading(false);
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
@@ -80,7 +87,7 @@ export default function LoginPage() {
             Forgot your password?
           </a>
 
-          <SubmitBtnForm text="Log in" />
+          <SubmitBtnForm text="Log in" loading={loading} />
 
           <h1 className="text-xs text-gray-400 pt-4">
             Don't have an account?{" "}
