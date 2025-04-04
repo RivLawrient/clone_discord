@@ -24,7 +24,7 @@ class UserController extends Controller
         $user->picture = '/api/user_picture/default_picture.png';
         $user->save();
         return response()->json([
-            'user' => new UserResource($user)
+            'data' => new UserResource($user)
         ])->withCookie(cookie('session', $user->token, 60 * 24))->setStatusCode(201);
     }
 
@@ -45,7 +45,7 @@ class UserController extends Controller
         $user->save();
         
         return response()->json([
-            'user' => new UserResource($user)
+            'data' => new UserResource($user)
         ])->withCookie(cookie('session', $user->token, 60 * 24));
     }
 

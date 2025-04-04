@@ -18,6 +18,7 @@ class ApiAuthMiddleware
     {
         $token = $request->cookie("session");
         $authenticate = false;
+        $user = null;
 
         if($token) {
             $user = User::where('token', $token)->first();
@@ -29,6 +30,8 @@ class ApiAuthMiddleware
         }
 
         if ($authenticate) {
+            // Menyimpan user ID ke dalam request
+            $request->merge(['user' => $user->id]);
             return $next($request);
         } else {
             User::where('token', $token)->update(['token' => null, 'token_exp' => null]);
