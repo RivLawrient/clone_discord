@@ -47,18 +47,34 @@ export default function ChannelButton({
         onDragStart={(e) => {
           e.dataTransfer.setData("id", id);
           e.dataTransfer.setData("index", index.toString());
+          setIsDragging(true);
+        }}
+        onDragEnd={() => {
+          setIsDragging(false);
         }}
         onClick={() => redirect(`/channel/${id}`)}
         className={cn(
           "flex w-10 h-10 justify-center items-center peer p-2 group bg-gray-800 rounded-xl hover:bg-indigo-500 cursor-pointer",
-          isActive && "bg-indigo-500"
+          isActive && "bg-indigo-500",
+          isDragging && "bg-gray-800"
         )}
       >
-        {url_img ? (
+        {!isDragging &&
+          (url_img ? (
+            <img
+              src={url_img}
+              alt={`${name} channel`}
+              className="object-cover"
+            />
+          ) : (
+            <span>{name[0].toUpperCase()}</span>
+          ))}
+
+        {/* {url_img ? (
           <img src={url_img} alt={`${name} channel`} className="object-cover" />
         ) : (
           <span>{name[0].toUpperCase()}</span>
-        )}
+        )} */}
       </button>
       <div
         draggable={false}

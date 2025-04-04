@@ -45,7 +45,7 @@ export default function SideNavBar() {
         />
       </div>
 
-      <hr className="border-neutral-900 w-1/2 border-[1.5px]" />
+      <hr className="border-neutral-800 w-1/2 border-[1.5px]" />
 
       {channels.map((channel) => (
         <ChannelBtn
