@@ -54,27 +54,21 @@ export default function ChannelButton({
         }}
         onClick={() => redirect(`/channel/${id}`)}
         className={cn(
-          "flex w-10 h-10 justify-center items-center peer p-2 group bg-gray-800 rounded-xl hover:bg-indigo-500 cursor-pointer",
+          "flex w-10 h-10 justify-center items-center peer group bg-gray-800 rounded-xl hover:bg-indigo-500 cursor-pointer",
           isActive && "bg-indigo-500",
-          isDragging && "bg-gray-800"
+          isDragging && "bg-gray-800",
+          url_img ? "bg-neutral-900" : "p-2 "
         )}
       >
-        {!isDragging &&
-          (url_img ? (
-            <img
-              src={url_img}
-              alt={`${name} channel`}
-              className="object-cover"
-            />
-          ) : (
-            <span>{name[0].toUpperCase()}</span>
-          ))}
-
-        {/* {url_img ? (
-          <img src={url_img} alt={`${name} channel`} className="object-cover" />
+        {url_img ? (
+          <img
+            src={url_img}
+            alt={`${name} channel`}
+            className="object-cover w-full h-full rounded-xl"
+          />
         ) : (
           <span>{name[0].toUpperCase()}</span>
-        )} */}
+        )}
       </button>
       <div
         draggable={false}
@@ -101,6 +95,10 @@ export default function ChannelButton({
           )}
         />
       )}
+
+      <div className="absolute left-18 z-[51] hidden peer-hover:block text-nowrap bg-neutral-800 border border-neutral-700 rounded-lg p-1.5">
+        {name}
+      </div>
     </div>
   );
 }

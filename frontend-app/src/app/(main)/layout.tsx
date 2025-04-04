@@ -5,6 +5,8 @@ import { redirect } from "next/navigation";
 import SideNavBar from "./_components/sideNavBar";
 import HeaderBar from "./_components/headerBar";
 import ListChannelBar from "./_components/listChannelBar";
+import { ChannelProvider } from "@/context/channelContext";
+
 export default async function MainLayout({
   children,
 }: {
@@ -17,15 +19,18 @@ export default async function MainLayout({
   }
   return (
     <AuthProvider>
-      <DisableRightClick />
-      <div className="h-screen w-screen flex flex-col fixed bg-foreground">
-        <HeaderBar />
-        <div className="h-full flex text-white">
-          <SideNavBar />
-          <ListChannelBar />
-          <div className="w-full bg-neutral-900">{children}</div>
+      <ChannelProvider>
+        <DisableRightClick />
+        {/* <AddServerModal /> */}
+        <div className="h-screen w-screen flex flex-col fixed bg-foreground">
+          <HeaderBar />
+          <div className="h-full flex text-white">
+            <SideNavBar />
+            <ListChannelBar />
+            <div className="w-full bg-neutral-900">{children}</div>
+          </div>
         </div>
-      </div>
+      </ChannelProvider>
     </AuthProvider>
   );
 }
