@@ -54,7 +54,7 @@ export default function LoginPage() {
             disabled={loading}
           />
 
-          <a className="text-xs text-blue-500 mt-1 font-semibold cursor-not-allowed">
+          <a className="text-xs text-indigo-500 mt-1 font-semibold cursor-not-allowed">
             Forgot your password?
           </a>
 
@@ -62,7 +62,7 @@ export default function LoginPage() {
 
           <h1 className="text-xs text-gray-400 pt-4">
             Don't have an account?{" "}
-            <a href="/register" className="text-blue-500 hover:underline">
+            <a href="/register" className="text-indigo-500 hover:underline">
               Register
             </a>
           </h1>

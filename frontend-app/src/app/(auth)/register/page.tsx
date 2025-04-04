@@ -184,17 +184,17 @@ export default function RegisterPage() {
           <SubmitBtnForm text="Register" loading={loading} />
           <h1 className="text-xs text-gray-400 font-semib old mt-2">
             By signing up, you agree to our{" "}
-            <a href="/terms" className="text-blue-500 hover:underline">
+            <a href="/terms" className="text-indigo-500 hover:underline">
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="/privacy" className="text-blue-500 hover:underline">
+            <a href="/privacy" className="text-indigo-500 hover:underline">
               Privacy Policy
             </a>
           </h1>
           <a
             href="/login"
-            className="text-xs text-blue-500 mt-4 hover:underline"
+            className="text-xs text-indigo-500 mt-4 hover:underline"
           >
             Already have an account?
           </a>

@@ -22,17 +22,22 @@ export default function useLogin() {
       },
       body: JSON.stringify(formData),
       credentials: "include",
-    }).then(async (res) => {
-      if (res.ok) {
-        router.push("/");
-      } else if (res.status === 400) {
-        setError("Email or Password is incorrect");
+    })
+      .then(async (res) => {
+        if (res.ok) {
+          router.push("/");
+        } else if (res.status === 400) {
+          setError("Email or Password is incorrect");
+          setLoading(false);
+        } else if (res.status === 401) {
+          setError("Unauthorized");
+          setLoading(false);
+        }
+      })
+      .catch(() => {
+        setError("Something went wrong");
         setLoading(false);
-      } else if (res.status === 401) {
-        setError("Unauthorized");
-        setLoading(false);
-      }
-    });
+      });
   };
 
   return {

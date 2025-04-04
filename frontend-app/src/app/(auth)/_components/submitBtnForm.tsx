@@ -10,7 +10,7 @@ export default function submitBtnForm({ text, loading }: submitBtnFormProps) {
     <button
       type="submit"
       disabled={loading}
-      className="bg-blue-500 text-white text-sm flex items-center justify-center gap-2 rounded-lg py-3 mt-4 cursor-pointer hover:bg-blue-600 transition-all"
+      className="bg-indigo-500 text-white text-sm flex items-center justify-center gap-2 rounded-lg py-3 mt-4 cursor-pointer hover:bg-indigo-600 transition-all"
     >
       {loading ? <Loader2 className="animate-spin" /> : text}
     </button>

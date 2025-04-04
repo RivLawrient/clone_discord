@@ -1,14 +1,5 @@
-"use client";
-import { useAuth } from "@/context/authContext";
-import Link from "next/link";
+import { redirect } from "next/navigation";
 
 export default function ChannelPage() {
-  const { logout } = useAuth();
-  return (
-    <div>
-      channel page
-      <Link href="/">back</Link>
-      <button onClick={logout}>logout</button>
-    </div>
-  );
+  redirect("/channel/me");
 }

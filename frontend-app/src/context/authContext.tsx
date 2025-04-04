@@ -57,6 +57,9 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
         })
         .finally(() => {
           setLoading(false);
+        })
+        .catch(() => {
+          redirect("/login");
         });
     }
   }, []);

@@ -42,36 +42,41 @@ export default function userRegister() {
           date_of_birth: `${formData.date_of_birth.year}-${formData.date_of_birth.month}-${formData.date_of_birth.day}`,
         }),
         credentials: "include",
-      }).then(async (res) => {
-        const data = await res.json();
-        if (res.ok) {
-          router.push("/");
-        } else if (res.status === 400) {
-          if (data.errors.email) {
-            setError(data.errors.email);
+      })
+        .then(async (res) => {
+          const data = await res.json();
+          if (res.ok) {
+            router.push("/");
+          } else if (res.status === 400) {
+            if (data.errors.email) {
+              setError(data.errors.email);
+              setLoading(false);
+              return;
+            } else if (data.errors.display_name) {
+              setError(data.errors.display_name[0]);
+              setLoading(false);
+              return;
+            } else if (data.errors.username) {
+              setError(data.errors.username[0]);
+              setLoading(false);
+            } else if (data.errors.password) {
+              setError(data.errors.password[0]);
+              setLoading(false);
+              return;
+            } else if (data.errors.date_of_birth) {
+              setError(data.errors.date_of_birth[0]);
+              setLoading(false);
+              return;
+            }
+          } else {
+            setError("Something went wrong");
             setLoading(false);
-            return;
-          } else if (data.errors.display_name) {
-            setError(data.errors.display_name[0]);
-            setLoading(false);
-            return;
-          } else if (data.errors.username) {
-            setError(data.errors.username[0]);
-            setLoading(false);
-          } else if (data.errors.password) {
-            setError(data.errors.password[0]);
-            setLoading(false);
-            return;
-          } else if (data.errors.date_of_birth) {
-            setError(data.errors.date_of_birth[0]);
-            setLoading(false);
-            return;
           }
-        } else {
+        })
+        .catch(() => {
           setError("Something went wrong");
           setLoading(false);
-        }
-      });
+        });
     }
   };
 
