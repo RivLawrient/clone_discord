@@ -3,6 +3,7 @@ import { useChannel } from "@/context/channelContext";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { AddServerModal } from "./addServerBtn";
+import { UserIcon } from "lucide-react";
 
 export default function HeaderBar() {
   const pathname = usePathname();
@@ -17,11 +18,18 @@ export default function HeaderBar() {
   }, [pathname]);
   return (
     <header className="header h-[36px] w-full bg-foreground text-white flex items-center justify-center">
-      {channels.map((channel) => {
-        if (channel.id == pathname.split("/").pop()) {
-          return <div key={channel.id}>{channel.name}</div>;
-        }
-      })}
+      {pathname.split("/").pop() == "me" ? (
+        <div className="flex items-center gap-2 text-sm ">
+          <UserIcon className="w-4 h-4" />
+          Friends
+        </div>
+      ) : (
+        channels.map((channel) => {
+          if (channel.id == pathname.split("/").pop()) {
+            return <div key={channel.id}>{channel.name}</div>;
+          }
+        })
+      )}
     </header>
   );
 }

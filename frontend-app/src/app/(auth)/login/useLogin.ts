@@ -24,13 +24,14 @@ export default function useLogin() {
       credentials: "include",
     })
       .then(async (res) => {
+        const data = await res.json();
         if (res.ok) {
           router.push("/");
         } else if (res.status === 400) {
           setError("Email or Password is incorrect");
           setLoading(false);
         } else if (res.status === 401) {
-          setError("Unauthorized");
+          setError(data.errors.message);
           setLoading(false);
         }
       })
