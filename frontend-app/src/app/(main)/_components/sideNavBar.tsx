@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import ChannelBtn from "./channelBtn";
 import { useChannel } from "@/context/channelContext";
 import { AddServerBtn } from "./addServerBtn";
+
 interface Channel {
   id: string;
   name: string;
@@ -16,10 +17,11 @@ export default function SideNavBar() {
   const pathname = usePathname();
   const route = pathname.split("/")[2];
   const { channels } = useChannel();
+
   return (
-    <aside className="sidebar min-w-[72px] relative flex flex-col items-center bg-foreground text-white h-full gap-2">
-      <div className="flex flex-col gap-2 relative w-full justify-center items-center">
-        <button className="flex w-full justify-center peer items-center ">
+    <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white">
+      <div className="relative flex w-full flex-col items-center justify-center gap-2">
+        <button className="peer flex w-full items-center justify-center">
           <img
             src="/dc.png"
             alt="dc"
@@ -27,23 +29,23 @@ export default function SideNavBar() {
               router.push("/channel/me");
             }}
             className={cn(
-              "w-10 h-10 object-contain rounded-xl hover:bg-indigo-500  p-2 cursor-pointer",
-              route == "me" ? "bg-indigo-500" : "bg-gray-800"
+              "h-10 w-10 cursor-pointer rounded-xl object-contain p-2 hover:bg-indigo-500",
+              route == "me" ? "bg-indigo-500" : "bg-gray-800",
             )}
           />
         </button>
         <div
           className={cn(
-            "absolute w-0 left-0 bg-white rounded-r-lg peer-hover:w-1 transition-all ",
-            route == "me" ? "h-full w-1" : "h-1/2 w-0 "
+            "absolute left-0 w-0 rounded-r-lg bg-white transition-all peer-hover:w-1",
+            route == "me" ? "h-full w-1" : "h-1/2 w-0",
           )}
         />
-        <div className="absolute text-[14px] font-semibold left-17 z-[51] hidden peer-hover:block text-nowrap bg-neutral-900 border border-neutral-800 rounded-lg p-2">
+        <div className="absolute left-17 z-[51] hidden rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-[14px] font-semibold text-nowrap peer-hover:block">
           Direct Messages
         </div>
       </div>
 
-      <hr className="border-neutral-800 w-1/2 border-[1.5px]" />
+      <hr className="w-1/2 border-[1.5px] border-neutral-800" />
 
       {channels.map((channel) => (
         <ChannelBtn

@@ -25,41 +25,41 @@ export default function UserBar() {
   return (
     <>
       <SettingView setting={setting} />
-      <div className="w-[372px] z-[51] absolute bottom-0 left-0 p-2">
-        <div className="flex p-2 w-full bg-neutral-900 max-h-[56px] rounded-sm items-center justify-center">
-          <div className="h-10 w-10 rounded-full overflow-hidden bg-foreground flex items-center justify-center">
+      <div className="absolute bottom-0 left-0 z-[51] w-[372px] p-2">
+        <div className="flex max-h-[56px] w-full items-center justify-center rounded-sm bg-neutral-900 p-2">
+          <div className="bg-foreground flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
             <img
               src={`${user?.picture}`}
               alt="user picture"
               className={cn(
                 "object-cover",
-                user?.picture.endsWith("default_picture.png") && "p-2"
+                user?.picture.endsWith("default_picture.png") && "p-2",
               )}
             />
           </div>
-          <div className="flex group flex-col pl-3 leading-4 grow hover:bg-neutral-800 hover:rounded-md">
-            <h1 className="text-white text-[14px] font-semibold">
+          <div className="group flex grow flex-col pl-3 leading-4 hover:rounded-md hover:bg-neutral-800">
+            <h1 className="text-[14px] font-semibold text-white">
               {user?.display_name}
             </h1>
-            <p className="text-neutral-400 text-[14px] group-hover:hidden">
+            <p className="text-[14px] text-neutral-400 group-hover:hidden">
               online
             </p>
-            <p className="text-neutral-400 text-[14px] group-hover:block hidden">
+            <p className="hidden text-[14px] text-neutral-400 group-hover:block">
               {user?.username}
             </p>
           </div>
-          <div className="ml-auto self-end flex gap-0.5 items-center justify-center h-full ">
-            <button className="text-neutral-400 text-[14px] p-2 rounded-md hover:bg-neutral-800 cursor-pointer my-0.5">
-              <Headphones className="w-5 h-5" />
+          <div className="ml-auto flex h-full items-center justify-center gap-0.5 self-end">
+            <button className="my-0.5 cursor-pointer rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-800">
+              <Headphones className="h-5 w-5" />
             </button>
             <button
               onClick={() => {
                 setSetting(true);
               }}
-              className="text-neutral-400 text-[14px] p-2 group flex items-center justify-center rounded-md hover:bg-neutral-800 cursor-pointer my-0.5"
+              className="group my-0.5 flex cursor-pointer items-center justify-center rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-800"
             >
-              <Settings className="w-5 h-5 group-hover:animate-spin" />
-              <div className="group-hover:block hidden absolute text-white text-[12px] -top-6 text-nowrap p-1.5 rounded-md bg-neutral-800 border border-neutral-700">
+              <Settings className="h-5 w-5 group-hover:animate-spin" />
+              <div className="absolute -top-6 hidden rounded-md border border-neutral-700 bg-neutral-800 p-1.5 text-[12px] text-nowrap text-white group-hover:block">
                 User Settings
               </div>
             </button>
@@ -73,12 +73,12 @@ export default function UserBar() {
 function SettingView(props: { setting: boolean }) {
   if (!props.setting) return null;
   return (
-    <div className="absolute z-[99] bg-red-200/50 -top-9 w-screen h-[calc(100vh+36px)] flex">
-      <div className="bg-neutral-900 w-7/12 flex">
-        <div className="min-w-[264px] h-full"></div>
+    <div className="absolute -top-9 z-[99] flex h-[calc(100vh+36px)] w-screen bg-red-200/50">
+      <div className="flex w-7/12 bg-neutral-900">
+        <div className="h-full min-w-[264px]"></div>
       </div>
-      <div className="bg-neutral-800 w-full flex">
-        <div className="min-w-[850px] h-full"></div>
+      <div className="flex w-full bg-neutral-800">
+        <div className="h-full min-w-[850px]"></div>
       </div>
     </div>
   );
