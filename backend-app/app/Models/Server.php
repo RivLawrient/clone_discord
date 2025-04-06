@@ -46,4 +46,13 @@ class Server extends Model
     {
         return $this->hasManyThrough(User::class, MyServer::class, 'server_id', 'id', 'id', 'user_id');
     }
+
+    /**
+     * Relasi ke model RoomServer
+     *
+     * @return HasMany
+     */
+    public function roomServers(): HasMany {
+        return $this->hasMany(RoomServer::class, "server_id", "id");
+    }
 }

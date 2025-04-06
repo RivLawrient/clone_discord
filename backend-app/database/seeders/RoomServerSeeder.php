@@ -2,11 +2,10 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class ServerSeeder extends Seeder
+class RoomServerSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -14,9 +13,5 @@ class ServerSeeder extends Seeder
     public function run(): void
     {
         //
-        User::create([
-            'username' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MyServer;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\QueryException;
@@ -47,6 +48,7 @@ class MyServerController extends Controller
             }
             return $server;
         });
+
 
         return response()->json([
             'data' => $myServers

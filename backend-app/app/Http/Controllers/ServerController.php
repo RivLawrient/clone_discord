@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\ServerCreateRequest;
 use App\Http\Resources\ServerResource;
 use App\Models\MyServer;
+use App\Models\RoomServer;
 use App\Models\Server;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -37,6 +38,12 @@ class ServerController extends Controller
         $myServer->user_id = $request->user;
         $myServer->server_id = $result->id;
         $myServer->save();
+
+        $roomServer = new RoomServer();
+        $roomServer->id = Str::uuid();
+        $roomServer->name = "general";
+        $roomServer->server_id = $result->id;
+        $roomServer->save();
 
         return response()->json([
             'data' => $result
