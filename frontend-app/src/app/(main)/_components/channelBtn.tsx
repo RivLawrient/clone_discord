@@ -19,11 +19,11 @@ export default function ChannelButton({
   last = false,
 }: ChannelButtonProps) {
   const pathname = usePathname();
-  const isActive = pathname === `/channel/${id}`;
+  const isActive = pathname.startsWith(`/channel/${id}`);
   const [isDragging, setIsDragging] = useState(false);
   const [isLastDragging, setIsLastDragging] = useState(false);
   return (
-    <div className="flex w-full relative justify-center items-center">
+    <div className="relative flex w-full items-center justify-center">
       <div
         onDragOver={(e) => {
           e.preventDefault();
@@ -37,8 +37,8 @@ export default function ChannelButton({
           console.log(index, e.dataTransfer.getData("index"));
         }}
         className={cn(
-          "absolute my-2 -top-3.5 h-1 w-10/12 rounded-2xl bg-green-500 transition-opacity duration-200",
-          isDragging ? "opacity-100" : "opacity-0"
+          "absolute -top-3.5 my-2 h-1 w-10/12 rounded-2xl bg-green-500 transition-opacity duration-200",
+          isDragging ? "opacity-100" : "opacity-0",
         )}
       />
       <button
@@ -54,17 +54,17 @@ export default function ChannelButton({
         }}
         onClick={() => redirect(`/channel/${id}`)}
         className={cn(
-          "flex w-10 h-10 justify-center items-center peer group bg-gray-800 rounded-xl hover:bg-indigo-500 cursor-pointer",
+          "peer group flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl bg-gray-800 hover:bg-indigo-500",
           isActive && "bg-indigo-500",
           isDragging && "bg-gray-800",
-          url_img ? "bg-neutral-900" : "p-2 "
+          url_img ? "bg-neutral-900" : "p-2",
         )}
       >
         {url_img ? (
           <img
             src={url_img}
             alt={`${name} channel`}
-            className="object-cover w-full h-full rounded-xl"
+            className="h-full w-full rounded-xl object-cover"
           />
         ) : (
           <span>{name[0].toUpperCase()}</span>
@@ -73,8 +73,8 @@ export default function ChannelButton({
       <div
         draggable={false}
         className={cn(
-          "absolute w-0 left-0 bg-white rounded-r-lg transition-all peer-hover:w-1",
-          isActive ? "w-1 h-full" : "w-0 h-1/2"
+          "absolute left-0 w-0 rounded-r-lg bg-white transition-all peer-hover:w-1",
+          isActive ? "h-full w-1" : "h-1/2 w-0",
         )}
       />
       {last && (
@@ -90,13 +90,13 @@ export default function ChannelButton({
             console.log(id, e.dataTransfer.getData("id"));
           }}
           className={cn(
-            "absolute h-1 -bottom-1.5 w-10/12 rounded-2xl bg-green-500 transition-opacity duration-200",
-            isLastDragging ? "opacity-100" : "opacity-0"
+            "absolute -bottom-1.5 h-1 w-10/12 rounded-2xl bg-green-500 transition-opacity duration-200",
+            isLastDragging ? "opacity-100" : "opacity-0",
           )}
         />
       )}
 
-      <div className="absolute text-[14px] font-semibold left-17 z-[51] hidden peer-hover:block text-nowrap bg-neutral-900 border border-neutral-800 rounded-lg p-2">
+      <div className="absolute left-17 z-[51] hidden rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-[14px] font-semibold text-nowrap peer-hover:block">
         {name}
       </div>
     </div>

@@ -5,6 +5,7 @@ import { usePathname, useRouter } from "next/navigation";
 import ChannelBtn from "./channelBtn";
 import { useChannel } from "@/context/channelContext";
 import { AddServerBtn } from "./addServerBtn";
+import { useEffect } from "react";
 
 interface Channel {
   id: string;
@@ -18,6 +19,9 @@ export default function SideNavBar() {
   const route = pathname.split("/")[2];
   const { channels } = useChannel();
 
+  useEffect(() => {
+    console.log(route);
+  }, []);
   return (
     <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white">
       <div className="relative flex w-full flex-col items-center justify-center gap-2">

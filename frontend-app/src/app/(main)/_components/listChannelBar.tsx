@@ -53,11 +53,28 @@ function ListMe() {
     </div>
   );
 }
+interface RoomServer {
+  id: string;
+  name: string;
+}
 
 function ListServer() {
   const channel = useChannel();
   const path = usePathname();
   const [open, setOpen] = useState(true);
+  const [roomServers, setRoomServers] = useState<RoomServer[]>([]);
+
+  useEffect(() => {
+    fetch(
+      `${process.env.HOST_API_PUBLIC}/api/room_server/${path.split("/")[2]}`,
+      {
+        credentials: "include",
+      },
+    )
+      .then((res) => res.json())
+      .then((data) => setRoomServers(data.data));
+  }, [path]);
+
   return (
     <div className="flex flex-col">
       <div className="flex h-12 items-center justify-between border-b border-neutral-800 px-3 hover:bg-neutral-800">
@@ -81,17 +98,20 @@ function ListServer() {
           </div>
           <div className="flex flex-col items-start">
             {open && (
+              // <>
+              //   <ListChannel name="Chatting" id="1" />
+              //   <ListChannel name="Bott" id="1" />
+              // </>
               <>
-                <ListChannel name="Chatting" id="1" />
-                <ListChannel name="Bott" id="1" />
+                {roomServers.map((roomServer) => (
+                  <ListChannel
+                    key={roomServer.id}
+                    name={roomServer.name}
+                    id={roomServer.id}
+                  />
+                ))}
               </>
             )}
-            {/* <button className="flex items-center p-2">
-              <Hash className="w-4 h-4 mr-1" /> Chatting
-            </button>
-            <button className="flex items-cente ">
-              <Hash className="w-4 h-4 mr-1" /> Bot
-            </button> */}
           </div>
         </div>
       </div>
@@ -100,8 +120,16 @@ function ListServer() {
 }
 
 function ListChannel({ name, id }: { name: string; id: string }) {
+  const router = useRouter();
+  const path = usePathname();
   return (
-    <button className="group flex w-full items-center justify-between rounded-md p-2 py-1 text-sm hover:bg-neutral-800 hover:text-white">
+    <button
+      onClick={() => router.push(`/channel/${path.split("/")[2]}/${id}`)}
+      className={cn(
+        "group flex w-full items-center justify-between rounded-md p-2 py-1 text-sm hover:bg-neutral-800 hover:text-white",
+        path.split("/")[3] == id && "bg-neutral-800 text-neutral-200",
+      )}
+    >
       <span className="flex items-center gap-1">
         <Hash className="mr-1 h-4 w-4" /> {name}
       </span>
