@@ -23,6 +23,9 @@ export function AddServerBtn() {
             "absolute h-1/2 w-0 left-0 bg-white rounded-r-lg peer-hover:w-1 transition-all"
           )}
         />
+        <div className="absolute text-[14px] font-semibold left-17 z-[51] hidden peer-hover:block text-nowrap bg-neutral-900 border border-neutral-800 rounded-lg p-2">
+          Add Server
+        </div>
       </div>
     </>
   );
@@ -89,7 +92,7 @@ export function AddServerModal({
       if (res.ok) {
         const data = await res.json();
         server.setChannels([...server.channels, data.data]);
-      setLoading(false);
+        setLoading(false);
         onClose(); // Tutup modal saat sukses
       }
     } catch (err) {
@@ -104,7 +107,7 @@ export function AddServerModal({
     }
   }, [isOpen]);
 
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
   return (
     <div

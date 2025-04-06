@@ -96,7 +96,7 @@ export default function ChannelButton({
         />
       )}
 
-      <div className="absolute left-18 z-[51] hidden peer-hover:block text-nowrap bg-neutral-800 border border-neutral-700 rounded-lg p-1.5">
+      <div className="absolute text-[14px] font-semibold left-17 z-[51] hidden peer-hover:block text-nowrap bg-neutral-900 border border-neutral-800 rounded-lg p-2">
         {name}
       </div>
     </div>

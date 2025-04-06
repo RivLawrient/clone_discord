@@ -10,15 +10,19 @@ import {
   UserIcon,
 } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
+import UserBar from "./userBar";
 
 export default function ListChannelBar() {
   const path = usePathname();
+
   return (
-    <div className="aside rounded-l-lg relative w-[380px] h-full bg-foreground border-l-[1.5px] border-t-[1.5px] border-neutral-800 overflow-hidden">
-      {path.split("/")[2] == "me" ? <ListMe /> : <ListServer />}
-      {/* <div className="absolute z-50 right-0 top-0 bottom-0 w-1 hover:bg-neutral-700/50" /> */}
-    </div>
+    <>
+      <UserBar />
+      <div className="aside rounded-l-lg relative min-w-[300px] h-full bg-foreground border-l-[1.5px] border-t-[1.5px] border-neutral-800 overflow-hidden">
+        {path.split("/")[2] == "me" ? <ListMe /> : <ListServer />}
+      </div>
+    </>
   );
 }
 
@@ -64,7 +68,7 @@ function ListServer() {
       </div>
 
       <div className="flex flex-col">
-        <div className="flex flex-col p-3 text-neutral-400">
+        <div className="flex flex-col p-3 text-neutral-400 font-semibold">
           <div className="text-[14px] px-2 hover:text-white flex items-center gap-1 justify-between">
             <h1
               onClick={() => setOpen(!open)}

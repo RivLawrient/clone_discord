@@ -38,6 +38,9 @@ export default function SideNavBar() {
             route == "me" ? "h-full w-1" : "h-1/2 w-0 "
           )}
         />
+        <div className="absolute text-[14px] font-semibold left-17 z-[51] hidden peer-hover:block text-nowrap bg-neutral-900 border border-neutral-800 rounded-lg p-2">
+          Direct Messages
+        </div>
       </div>
 
       <hr className="border-neutral-800 w-1/2 border-[1.5px]" />
