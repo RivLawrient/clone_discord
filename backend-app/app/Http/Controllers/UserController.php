@@ -15,17 +15,20 @@ class UserController extends Controller
 {
     public function register(UserRegisterRequest $request): JsonResponse {
         $data = $request->validated();
-    
-        $user = User::create($data);
-        $user->is_online = false;
-        $user->password = Hash::make($data['password']);
+        $data['password'] = Hash::make($data['password']);
+
+        $user = User::create($data)->fresh();
         $user->token = Str::uuid();
         $user->token_exp = time() + (60 * 60) * 24; 
         $user->picture = '/api/user_picture/default_picture.png';
         $user->save();
-        return response()->json([
+
+        return response()
+        ->json([
             'data' => new UserResource($user)
-        ])->withCookie(cookie('session', $user->token, 60 * 24))->setStatusCode(201);
+        ])
+        ->withCookie(cookie('session', $user->token, 60 * 24))
+        ->setStatusCode(201);
     }
 
     public function login(UserLoginRequest $request): JsonResponse {

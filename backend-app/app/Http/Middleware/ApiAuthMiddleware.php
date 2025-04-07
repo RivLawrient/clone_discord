@@ -21,7 +21,7 @@ class ApiAuthMiddleware
         $user = null;
 
         if($token) {
-            $user = User::where('token', $token)->first();
+            $user = User::select('id', 'token_exp')->where('token', $token)->first();
             if ($user) {
                 if ($user->token_exp > time()) {
                     $authenticate = true;

@@ -6,6 +6,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Support\Facades\Hash;
 
 class User extends Model
 {
@@ -18,6 +19,7 @@ class User extends Model
 
     protected $fillable = [
         'display_name',
+        'banner_color',
         'username',
         'email',
         'password',
@@ -25,14 +27,7 @@ class User extends Model
         'status',
         'about_me',
         'is_online',
-        'token_exp',
-        'token'
     ];
-
-    protected $casts = [
-        'is_online' => 'boolean'
-    ];
-    
     /**
      * Relasi ke model MyServer
      *
