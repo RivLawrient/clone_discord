@@ -1,21 +1,20 @@
-import { cookies } from "next/headers";
-import Image from "next/image";
 import { redirect } from "next/navigation";
+import { getUser } from "../(main)/_getData/getUser";
+import Image from "next/image";
 
 export default async function AuthLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookie = await cookies();
-  const token = cookie.get("session");
-  if (token) {
+  const user = await getUser();
+  if (user) {
     redirect("/");
   }
   return (
     <div
       style={{ backgroundImage: "url('/bg.svg')", backgroundSize: "cover" }}
-      className="h-screen w-screen fixed"
+      className="fixed h-screen w-screen"
     >
       <Image
         className="absolute m-11"

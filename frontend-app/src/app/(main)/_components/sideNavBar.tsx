@@ -20,7 +20,7 @@ export default function SideNavBar() {
   const { channels } = useChannel();
 
   useEffect(() => {
-    console.log(route);
+    // console.log(route);
   }, []);
   return (
     <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white">

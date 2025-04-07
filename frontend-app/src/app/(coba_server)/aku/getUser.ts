@@ -15,16 +15,16 @@ interface User {
   updated_at: string;
 }
 
-export async function getUser(): Promise<User> {
-  const cookieStore = await cookies(); // Ambil cookies dari request
-  const cookieHeader = cookieStore.get("session")?.value;
+// export async function getUser(): Promise<User> {
+//   const cookieStore = await cookies(); // Ambil cookies dari request
+//   const cookieHeader = cookieStore.get("session")?.value;
 
-  const res = await fetch(`${process.env.HOST_API_PUBLIC}/api/user`, {
-    method: "GET",
-    headers: {
-      Cookie: `session=${cookieHeader}`, // Sertakan cookies dalam header
-    },
-  });
-  const data = await res.json();
-  return data.data;
-}
+//   const res = await fetch(`${process.env.HOST_API_PUBLIC}/api/user`, {
+//     method: "GET",
+//     headers: {
+//       Cookie: `session=${cookieHeader}`, // Sertakan cookies dalam header
+//     },
+//   });
+//   const data = await res.json();
+//   return data.data;
+// }

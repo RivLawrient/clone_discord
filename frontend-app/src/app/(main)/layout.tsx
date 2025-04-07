@@ -1,30 +1,29 @@
 import DisableRightClick from "@/components/DisableRightClick";
 import { AuthProvider } from "@/context/authContext";
-import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 import SideNavBar from "./_components/sideNavBar";
 import HeaderBar from "./_components/headerBar";
 import ListChannelBar from "./_components/listChannelBar";
 import { ChannelProvider } from "@/context/channelContext";
+import { getUser } from "./_getData/getUser";
 
 export default async function MainLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const cookie = await cookies();
-  const token = cookie.get("session");
-  if (!token) {
+  const user = await getUser();
+  if (!user) {
     redirect("/login");
   }
+
   return (
-    <AuthProvider>
+    <AuthProvider user={user}>
       <ChannelProvider>
         <DisableRightClick />
-        {/* <AddServerModal /> */}
-        <div className="h-screen w-screen flex flex-col fixed bg-foreground">
+        <div className="bg-foreground fixed flex h-screen w-screen flex-col">
           <HeaderBar />
-          <div className="h-full flex text-white">
+          <div className="flex h-full text-white">
             <SideNavBar />
             <ListChannelBar />
             <div className="w-full bg-neutral-900">{children}</div>

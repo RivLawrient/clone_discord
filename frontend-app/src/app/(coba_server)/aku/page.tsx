@@ -1,38 +1,39 @@
-"use client"; // Harus client component karena menggunakan Context
-import { Router } from "next/router";
-import { getUser } from "./getUser";
-import { useRouter } from "next/navigation";
-import { useAuth } from "./auth-provider";
+// "use client"; // Harus client component karena menggunakan Context
+// import { Router } from "next/router";
+// import { getUser } from "./getUser";
+// import { useRouter } from "next/navigation";
+// import { useAuth } from "./auth-provider";
 
-// app/aku/page.tsx
+// // app/aku/page.tsx
 
-export default function Aku() {
-  const { user } = useAuth();
-  const router = useRouter();
-  return (
-    <div>
-      <a href="/kamu">aku</a>
-      <button onClick={() => router.push("/kamu")}>kamu</button>
-      <h1>Data Pengguna</h1>
-      <ul>
-        <li>ID: {user.id}</li>
-        <li>Nama Tampilan: {user.display_name}</li>
-        <li>Username: {user.username}</li>
-        <li>Email: {user.email}</li>
-        <li>Status: {user.status}</li>
-        <li>Tentang Saya: {user.about_me}</li>
-        <li>Online: {user.is_online ? "Ya" : "Tidak"}</li>
-        <li>
-          Gambar: <img src={user.picture} alt="Profile" width={50} />
-        </li>
-        <li>Token: {user.token}</li>
-        <li>Token Expired: {user.token_exp}</li>
-        <li>Dibuat: {user.created_at}</li>
-        <li>Diperbarui: {user.updated_at}</li>
-      </ul>
-    </div>
-  );
-}
+// export default function Aku() {
+//   const { user } = useAuth();
+//   const router = useRouter();
+
+//   return (
+//     <div>
+//       <a href="/kamu">aku</a>
+//       <button onClick={() => router.push("/kamu")}>kamu</button>
+//       <h1>Data Pengguna</h1>
+//       <ul>
+//         <li>ID: {user.id}</li>
+//         <li>Nama Tampilan: {user.display_name}</li>
+//         <li>Username: {user.username}</li>
+//         <li>Email: {user.email}</li>
+//         <li>Status: {user.status}</li>
+//         <li>Tentang Saya: {user.about_me}</li>
+//         <li>Online: {user.is_online ? "Ya" : "Tidak"}</li>
+//         <li>
+//           Gambar: <img src={user.picture} alt="Profile" width={50} />
+//         </li>
+//         <li>Token: {user.token}</li>
+//         <li>Token Expired: {user.token_exp}</li>
+//         <li>Dibuat: {user.created_at}</li>
+//         <li>Diperbarui: {user.updated_at}</li>
+//       </ul>
+//     </div>
+//   );
+// }
 
 // export default async function Aku() {
 //   const user = await getUser();

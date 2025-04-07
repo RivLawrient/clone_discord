@@ -1,15 +1,9 @@
 "use client";
 
 import { redirect } from "next/navigation";
-import {
-  createContext,
-  ReactNode,
-  useContext,
-  useEffect,
-  useState,
-} from "react";
+import { createContext, ReactNode, useContext, useState } from "react";
 
-interface User {
+export interface User {
   id: string;
   display_name: string;
   username: string;
@@ -31,38 +25,12 @@ interface AuthContextType {
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined
+  undefined,
 );
 
-export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [user, setUser] = useState<User | null>(null);
+export const AuthProvider = (props: { children: ReactNode; user: User }) => {
+  const [user, setUser] = useState<User>(props.user);
   const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    if (!user) {
-      fetch(`${process.env.HOST_API_PUBLIC}/api/user`, {
-        method: "GET",
-        credentials: "include",
-      })
-        .then((res) => {
-          if (res.ok) {
-            return res.json();
-          } else if (res.status === 401) {
-            redirect("/login");
-          }
-          return null;
-        })
-        .then((data) => {
-          setUser(data.data);
-        })
-        .finally(() => {
-          setLoading(false);
-        })
-        .catch(() => {
-          redirect("/login");
-        });
-    }
-  }, []);
 
   const logout = () => {
     fetch(`${process.env.HOST_API_PUBLIC}/api/logout`, {
@@ -74,7 +42,7 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
 
   return (
     <AuthContext.Provider value={{ user, logout, loading }}>
-      {children}
+      {props.children}
     </AuthContext.Provider>
   );
 };
