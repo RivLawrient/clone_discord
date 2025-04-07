@@ -26,7 +26,6 @@ export default function userRegister() {
   const router = useRouter();
 
   const handleSubmit = async (data: FormRegister) => {
-    console.log(error);
     setError({
       email: "",
       display_name: "",

@@ -1,4 +1,4 @@
-import { Loader, Loader2 } from "lucide-react";
+import { Loader2 } from "lucide-react";
 
 interface submitBtnFormProps {
   text: string;
@@ -10,7 +10,7 @@ export default function submitBtnForm({ text, loading }: submitBtnFormProps) {
     <button
       type="submit"
       disabled={loading}
-      className="bg-indigo-500 text-white text-sm flex items-center justify-center gap-2 rounded-lg py-3 mt-4 cursor-pointer hover:bg-indigo-600 transition-all"
+      className="mt-4 flex cursor-pointer items-center justify-center gap-2 rounded-lg bg-indigo-500 py-3 text-sm text-white transition-all hover:bg-indigo-600"
     >
       {loading ? <Loader2 className="animate-spin" /> : text}
     </button>

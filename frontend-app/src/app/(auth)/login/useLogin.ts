@@ -1,26 +1,37 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
+export interface FormLogin {
+  email: string;
+  password: string;
+}
+
 export default function useLogin() {
-  const router = useRouter();
-  const [formData, setFormData] = useState({
+  const [error, setError] = useState({
     email: "",
     password: "",
+    server: "",
   });
-  const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const router = useRouter();
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    setError("");
+  const handleSubmit = async (data: FormLogin) => {
+    setError({
+      email: "",
+      password: "",
+      server: "",
+    });
     setLoading(true);
-    await fetch("http://127.0.0.1:8000/api/login", {
+    
+    await fetch(`${process.env.HOST_API_PUBLIC}/api/login`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify(formData),
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
       credentials: "include",
     })
       .then(async (res) => {
@@ -28,22 +39,30 @@ export default function useLogin() {
         if (res.ok) {
           router.push("/");
         } else if (res.status === 400) {
-          setError("Email or Password is incorrect");
+          setError((prevError) => ({
+            ...prevError,
+            ...(data.errors.email && { email: data.errors.email[0] }),
+            ...(data.errors.password && { password: data.errors.password[0] }),
+          }));
           setLoading(false);
         } else if (res.status === 401) {
-          setError(data.errors.message);
+          setError((prevError) => ({
+            ...prevError,
+            ...(data.errors.message && { server: data.errors.message }),
+          }));
           setLoading(false);
         }
       })
       .catch(() => {
-        setError("Something went wrong");
+        setError({
+          ...error,
+          server: "Server Error",
+        });
         setLoading(false);
       });
   };
 
   return {
-    formData,
-    setFormData,
     error,
     loading,
     setLoading,

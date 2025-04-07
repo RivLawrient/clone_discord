@@ -3,11 +3,10 @@
 import { useEffect } from "react";
 import InputForm from "../_components/inputForm";
 import SubmitBtnForm from "../_components/submitBtnForm";
-import useLogin from "./useLogin";
+import useLogin, { FormLogin } from "./useLogin";
 
 export default function LoginPage() {
-  const { formData, setFormData, error, loading, setLoading, handleSubmit } =
-    useLogin();
+  const { error, loading, setLoading, handleSubmit } = useLogin();
 
   useEffect(() => {
     setLoading(false);
@@ -22,38 +21,33 @@ export default function LoginPage() {
         </h1>
 
         <form
-          onSubmit={handleSubmit}
+          onSubmit={(e) => {
+            e.preventDefault();
+            const form = new FormData(e.target as HTMLFormElement);
+            const data: FormLogin = {
+              email: form.get("EMAIL") as string,
+              password: form.get("PASSWORD") as string,
+            };
+            handleSubmit(data);
+          }}
           className="flex w-full flex-col"
-          autoComplete="on"
         >
-          {error && (
+          {(error.email || error.password || error.server) && (
             <div className="rounded-lg border border-red-500 bg-red-500/10 p-2 text-xs text-red-500 transition-all">
-              {error}
+              {error.email || error.password || error.server}
             </div>
           )}
           <InputForm
             label="EMAIL"
             type="email"
-            value={formData.email}
-            onChange={(e) =>
-              setTimeout(() => {
-                setFormData({ ...formData, email: e.target.value });
-              }, 1000)
-            }
-            error={error}
+            error={error.email}
             isRequired={true}
             disabled={loading}
           />
           <InputForm
             label="PASSWORD"
             type="password"
-            value={formData.password}
-            onChange={(e) =>
-              setTimeout(() => {
-                setFormData({ ...formData, password: e.target.value });
-              }, 1000)
-            }
-            error={error}
+            error={error.password}
             isRequired={true}
             disabled={loading}
           />
