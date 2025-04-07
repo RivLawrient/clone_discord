@@ -98,10 +98,6 @@ function ListServer() {
           </div>
           <div className="flex flex-col items-start">
             {open && (
-              // <>
-              //   <ListChannel name="Chatting" id="1" />
-              //   <ListChannel name="Bott" id="1" />
-              // </>
               <>
                 {roomServers.map((roomServer) => (
                   <ListChannel
