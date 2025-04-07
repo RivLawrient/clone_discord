@@ -14,6 +14,12 @@ class RoomServerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        //
+        return [
+            'id' => $this->id,
+            'name' => $this->name,
+            'picture' => $this->picture,
+            'description' => $this->description,
+            'is_private' => $this->is_private,
+        ];
     }
 }
