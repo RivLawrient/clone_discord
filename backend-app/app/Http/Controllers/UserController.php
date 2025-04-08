@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\JsonResponse;
@@ -81,6 +82,12 @@ class UserController extends Controller
         }
         
         return response()->file($path);
+    }
+
+    public function list_user() {
+        $user = User::all();
+
+        return new UserCollection($user);
     }
     
 }

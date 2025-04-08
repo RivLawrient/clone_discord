@@ -1,5 +1,6 @@
 <?php
 
+use App\Events\MessageSent;
 use App\Http\Controllers\MyServerController;
 use App\Http\Controllers\RoomServerController;
 use App\Http\Controllers\ServerController;
@@ -13,6 +14,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
 Route::put('/login',[UserController::class, 'login']);
+Route::get('/list_user', [UserController::class, 'list_user']);
 
 Route::middleware(ApiAuthMiddleware::class)->group(function() {
     Route::get('/user', [UserController::class, 'user']);
