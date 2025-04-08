@@ -7,6 +7,7 @@ import ListChannelBar from "./_components/listChannelBar";
 import { getUser } from "./_getData/getUser";
 import { ServerProvider } from "@/context/serverContext";
 import getServer from "./_getData/getServer";
+import IdleTimer from "./_components/idleTimer";
 
 export default async function MainLayout({
   children,
@@ -23,6 +24,7 @@ export default async function MainLayout({
     <AuthProvider user={user}>
       <ServerProvider servers={servers ?? []}>
         <DisableRightClick />
+        {/* <IdleTimer /> */}
         <div className="bg-foreground fixed flex h-screen w-screen flex-col">
           <HeaderBar />
           <div className="flex h-full text-white">
