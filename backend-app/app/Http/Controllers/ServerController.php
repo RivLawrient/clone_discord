@@ -26,9 +26,6 @@ class ServerController extends Controller
             
             $server->picture = '/api/server_picture/' . $filename;
             $server->save();
-
-            $server->picture = request()->getSchemeAndHttpHost() . $server->picture;
-
         }
 
         MyServer::create([

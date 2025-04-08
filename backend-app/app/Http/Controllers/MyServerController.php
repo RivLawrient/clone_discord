@@ -3,7 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\MyServer;
-use App\Models\Server;
+use App\Http\Resources\ServerCollection;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\QueryException;
@@ -37,21 +37,13 @@ class MyServerController extends Controller
         }
     }
 
-    public function list(Request $request): JsonResponse {
-        $myServers = MyServer::with('server')
-            ->where('user_id', $request->user)
-            ->get()
-            ->pluck('server');
-        $myServers = $myServers->map(function($server) {
-            if ($server->picture) {
-                $server->picture = request()->getSchemeAndHttpHost() . $server->picture;
-            }
-            return $server;
-        });
+    public function list(Request $request): ServerCollection {
+        $myServers = MyServer::with(['server.roomServers'])
+        ->get()
+        ->pluck('server')
+        ->filter();
 
-
-        return response()->json([
-            'data' => $myServers
-        ]);
+        
+        return new ServerCollection($myServers);
     }
 }

@@ -14,10 +14,15 @@ class ServerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        // $prefixpict = '';
+
+        // if($this->picture) {
+        //     $prefixpict = request()->getSchemeAndHttpHost()
+        // }
         return [
             'id' => $this->id,
             'name' => $this->name,
-            'picture' => $this->picture,
+            'picture' =>  $this->picture ? request()->getSchemeAndHttpHost(). $this->picture : $this->picture,
             'description' => $this->description,
             'is_private' => $this->is_private,
             'invite_code' => $this->invite_code,
