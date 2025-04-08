@@ -12,7 +12,7 @@ import {
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import UserBar from "./userBar";
-
+import { useServer } from "@/context/serverContext";
 export default function ListChannelBar() {
   const path = usePathname();
 
@@ -59,27 +59,18 @@ interface RoomServer {
 }
 
 function ListServer() {
-  const channel = useChannel();
   const path = usePathname();
   const [open, setOpen] = useState(true);
-  const [roomServers, setRoomServers] = useState<RoomServer[]>([]);
-
-  useEffect(() => {
-    fetch(
-      `${process.env.HOST_API_PUBLIC}/api/room_server/${path.split("/")[2]}`,
-      {
-        credentials: "include",
-      },
-    )
-      .then((res) => res.json())
-      .then((data) => setRoomServers(data.data));
-  }, [path]);
+  const { servers } = useServer();
 
   return (
     <div className="flex flex-col">
       <div className="flex h-12 items-center justify-between border-b border-neutral-800 px-3 hover:bg-neutral-800">
         <h1>
-          {channel.channels.map((c) => c.id == path.split("/")[2] && c.name)}
+          {/* {channel.channels.map((c) => c.id == path.split("/")[2] && c.name)} */}
+          {servers.map(
+            (server) => server.id == path.split("/")[2] && server.name,
+          )}
         </h1>
         <ChevronDown />
       </div>
@@ -97,17 +88,14 @@ function ListServer() {
             <Plus className="h-4 w-4" />
           </div>
           <div className="flex flex-col items-start">
-            {open && (
-              <>
-                {roomServers.map((roomServer) => (
-                  <ListChannel
-                    key={roomServer.id}
-                    name={roomServer.name}
-                    id={roomServer.id}
-                  />
-                ))}
-              </>
-            )}
+            {open &&
+              servers.map(
+                (server) =>
+                  server.id == path.split("/")[2] &&
+                  server.room.map((room) => (
+                    <ListChannel id={room.id} name={room.name} />
+                  )),
+              )}
           </div>
         </div>
       </div>

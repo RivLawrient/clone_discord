@@ -2,28 +2,18 @@
 
 import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-import ChannelBtn from "./channelBtn";
-import { useChannel } from "@/context/channelContext";
 import { AddServerBtn } from "./addServerBtn";
-import { useEffect } from "react";
-
-interface Channel {
-  id: string;
-  name: string;
-  url_img?: string;
-}
+import { useServer } from "@/context/serverContext";
+import ServerBtn from "./channelBtn";
 
 export default function SideNavBar() {
   const router = useRouter();
   const pathname = usePathname();
   const route = pathname.split("/")[2];
-  const { channels } = useChannel();
+  const { servers } = useServer();
 
-  useEffect(() => {
-    // console.log(route);
-  }, []);
   return (
-    <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white">
+    <aside className="sidebar bg-foreground h-max-full relative flex min-w-[72px] flex-col items-center gap-2 text-white">
       <div className="relative flex w-full flex-col items-center justify-center gap-2">
         <button className="peer flex w-full items-center justify-center">
           <img
@@ -50,15 +40,14 @@ export default function SideNavBar() {
       </div>
 
       <hr className="w-1/2 border-[1.5px] border-neutral-800" />
-
-      {channels.map((channel) => (
-        <ChannelBtn
-          key={channel.id}
-          index={channels.indexOf(channel)}
-          name={channel.name}
-          url_img={channel.picture}
-          id={channel.id}
-          last={channels.indexOf(channel) === channels.length - 1}
+      {servers.map((server) => (
+        <ServerBtn
+          key={server.id}
+          name={server.name}
+          url_img={server.picture}
+          id={server.id}
+          index={servers.indexOf(server)}
+          last={servers.indexOf(server) === servers.length - 1}
         />
       ))}
 

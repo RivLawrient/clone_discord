@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 import { redirect, usePathname } from "next/navigation";
 import { useState } from "react";
 
-interface ChannelButtonProps {
+interface ServerBtnProps {
   index: number;
   name: string;
   url_img?: string;
@@ -11,13 +11,13 @@ interface ChannelButtonProps {
   last?: boolean;
 }
 
-export default function ChannelButton({
+export default function ServerBtn({
   index,
   name,
   url_img,
   id,
   last = false,
-}: ChannelButtonProps) {
+}: ServerBtnProps) {
   const pathname = usePathname();
   const isActive = pathname.startsWith(`/channel/${id}`);
   const [isDragging, setIsDragging] = useState(false);

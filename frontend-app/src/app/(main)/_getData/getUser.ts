@@ -3,7 +3,7 @@ import { cookies } from "next/headers";
 
 export async function getUser(): Promise<User | null> {
   const cookie = await cookies();
-  console.log("getUSer()");
+
   if (!cookie.get("session")) return null;
 
   return await fetch(`${process.env.HOST_API_PUBLIC}/api/user`, {

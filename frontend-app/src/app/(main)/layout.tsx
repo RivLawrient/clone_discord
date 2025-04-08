@@ -6,6 +6,8 @@ import HeaderBar from "./_components/headerBar";
 import ListChannelBar from "./_components/listChannelBar";
 import { ChannelProvider } from "@/context/channelContext";
 import { getUser } from "./_getData/getUser";
+import { ServerProvider } from "@/context/serverContext";
+import getServer from "./_getData/getServer";
 
 export default async function MainLayout({
   children,
@@ -17,9 +19,10 @@ export default async function MainLayout({
     redirect("/login");
   }
 
+  const servers = await getServer();
   return (
     <AuthProvider user={user}>
-      <ChannelProvider>
+      <ServerProvider servers={servers ?? []}>
         <DisableRightClick />
         <div className="bg-foreground fixed flex h-screen w-screen flex-col">
           <HeaderBar />
@@ -29,7 +32,7 @@ export default async function MainLayout({
             <div className="w-full bg-neutral-900">{children}</div>
           </div>
         </div>
-      </ChannelProvider>
+      </ServerProvider>
     </AuthProvider>
   );
 }

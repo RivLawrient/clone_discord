@@ -1,11 +1,12 @@
 "use client";
 import { useChannel } from "@/context/channelContext";
+import { useServer } from "@/context/serverContext";
 import { cn } from "@/lib/utils";
 import { CameraIcon, Plus, PlusCircleIcon } from "lucide-react";
 import { useRef, useEffect, useState } from "react";
 
 export function AddServerBtn() {
-  const [isOpen, setIsOpen] = useState(false); // Ubah default ke false
+  const [isOpen, setIsOpen] = useState(false);
   const openModal = () => setIsOpen(true);
   const closeModal = () => setIsOpen(false);
   return (
@@ -42,8 +43,12 @@ export function AddServerModal({
   const [formData, setFormData] = useState(() => new FormData());
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const server = useChannel();
-  // Cleanup URL saat komponen unmount atau preview berubah
+  const { servers, setServers } = useServer();
+  const [error, setError] = useState({
+    picture: "",
+    name: "",
+  });
+
   useEffect(() => {
     return () => {
       if (previewUrl) {
@@ -56,14 +61,12 @@ export function AddServerModal({
     const file = e.target.files?.[0];
     if (file) {
       const newFormData = new FormData();
-      // Salin data yang sudah ada
       for (let [key, value] of formData.entries()) {
         newFormData.append(key, value);
       }
       newFormData.set("picture", file);
       setFormData(newFormData);
 
-      // Buat preview
       const url = URL.createObjectURL(file);
       setPreviewUrl(url);
     }
@@ -74,7 +77,7 @@ export function AddServerModal({
     for (let [key, value] of formData.entries()) {
       newFormData.append(key, value);
     }
-    newFormData.set("name", e.target.value); // Gunakan set untuk mengganti nilai
+    newFormData.set("name", e.target.value);
     setFormData(newFormData);
   };
 
@@ -84,6 +87,10 @@ export function AddServerModal({
     }
     setLoading(true);
     try {
+      setError({
+        picture: "",
+        name: "",
+      });
       const res = await fetch(`${process.env.HOST_API_PUBLIC}/api/server/new`, {
         method: "POST",
         body: formData,
@@ -91,9 +98,17 @@ export function AddServerModal({
       });
       if (res.ok) {
         const data = await res.json();
-        server.setChannels([...server.channels, data.data]);
+        setServers([...servers, data.data]);
         setLoading(false);
-        onClose(); // Tutup modal saat sukses
+        onClose();
+      } else {
+        const data = await res.json();
+        setError({
+          ...error,
+          ...(data.errors.picture && { picture: data.errors.picture[0] }),
+          ...(data.errors.name && { name: data.errors.name[0] }),
+        });
+        setLoading(false);
       }
     } catch (err) {
       console.log(err);
@@ -164,6 +179,11 @@ export function AddServerModal({
             onChange={handleNameChange}
             className="rounded-lg border border-gray-800 bg-neutral-900 p-2 transition-all focus:border-blue-500 focus:outline-none"
           />
+          {(error.name || error.picture) && (
+            <div className="rounded-lg border border-red-500 bg-red-500/10 p-2 text-xs text-red-500 transition-all">
+              {error.name || error.picture}
+            </div>
+          )}
           <h1 className="my-2 text-start text-[10px] text-gray-400">
             By creating a server, you agree to Discord's{" "}
             <a href="" className="text-indigo-500 hover:underline">
