@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ServerCreateRequest;
+use App\Http\Resources\RoomServerResource;
 use App\Http\Resources\ServerResource;
 use App\Models\MyServer;
 use App\Models\RoomServer;
@@ -16,13 +17,12 @@ class ServerController extends Controller
     public function create(ServerCreateRequest $request): JsonResponse {
         $data = $request->validated();
 
-        $server = Server::create($data);
+        $server = Server::create($data)->fresh();
         if($request->hasFile('picture')) {
             $file = $request->file('picture');
             $extension = $file->getClientOriginalExtension();
             $filename = Str::uuid() . '.' . $extension;
-            $path = $file->storePubliclyAs('servers', $filename, 'public');
-            
+            $file->storePubliclyAs('servers', $filename, 'public');
             
             $server->picture = '/api/server_picture/' . $filename;
             $server->save();
@@ -31,23 +31,19 @@ class ServerController extends Controller
 
         }
 
-        $result = new ServerResource($server);
+        MyServer::create([
+            'user_id' => $request->user,
+            'server_id' => $server->id
+        ]);
 
-        $myServer = new MyServer();
-        $myServer->id = Str::uuid();
-        $myServer->user_id = $request->user;
-        $myServer->server_id = $result->id;
-        $myServer->save();
-
-        $roomServer = new RoomServer();
-        $roomServer->id = Str::uuid();
-        $roomServer->name = "general";
-        $roomServer->server_id = $result->id;
-        $roomServer->save();
+        RoomServer::create([
+            'name' => 'general',
+            'server_id' => $server->id
+        ])->fresh();
 
         return response()->json([
-            'data' => $result
-        ]);
+            'data' => new ServerResource($server),
+        ])->setStatusCode(201);
     }
 
 

@@ -16,10 +16,9 @@ class RoomServerResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'name' => $this->name,
-            'picture' => $this->picture,
-            'description' => $this->description,
-            'is_private' => $this->is_private,
+            'name' => $this->name,  
+            'created_at' => $this->created_at,
+            'updated_at' => $this->updated_at,
         ];
     }
 }

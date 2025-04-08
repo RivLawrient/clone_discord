@@ -19,12 +19,6 @@ class Server extends Model
         'name',
         'picture',
         'description',
-        'is_private',
-        'invite_code'
-    ];
-
-    protected $casts = [
-        'is_private' => 'boolean'
     ];
     
     /**

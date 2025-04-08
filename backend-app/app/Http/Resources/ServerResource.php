@@ -14,7 +14,7 @@ class ServerResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $data = [
+        return [
             'id' => $this->id,
             'name' => $this->name,
             'picture' => $this->picture,
@@ -23,13 +23,7 @@ class ServerResource extends JsonResource
             'invite_code' => $this->invite_code,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
+            'room' => RoomServerResource::collection($this->roomServers)
         ];
-        
-        // Hanya tambahkan field 'user' jika nilainya tidak null
-        // if ($request->user !== null) {
-        //     $data['user'] = $request->user;
-        // }
-        
-        return $data;
     }
 }

@@ -2,11 +2,13 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class RoomServer extends Model
 {
+    use HasUuids;
     protected $table = "room_servers";
 
     protected $primaryKey = "id";
@@ -14,8 +16,8 @@ class RoomServer extends Model
     public $incrementing = false;
 
     protected $fillable = [
-        "server_id",
         "name",
+        "server_id",
     ];
 
     public function server(): BelongsTo {
