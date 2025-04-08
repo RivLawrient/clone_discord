@@ -1,5 +1,7 @@
 <?php
 
+use App\Events\MessageSent;
+use App\Events\TestEvent;
 use App\Http\Controllers\MyServerController;
 use App\Http\Controllers\RoomServerController;
 use App\Http\Controllers\ServerController;
@@ -33,4 +35,11 @@ Route::get('/query', function(Request $request) {
     $data = User::select('id', 'token_exp')->where('token', $request->cookie('session'))->first();
 
     return $data;
+});
+
+
+Route::post('/send-message', function (Request $request) {
+    $message = $request->input('message');
+    event(new MessageSent($message));
+    return response()->json(['status' => 'Message sent!']);
 });
