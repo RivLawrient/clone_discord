@@ -1,5 +1,5 @@
 import { useRouter } from "next/navigation";
-import { FormEvent, useState } from "react";
+import { useState } from "react";
 
 export interface FormRegister {
   email: string;

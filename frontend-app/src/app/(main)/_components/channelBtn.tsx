@@ -1,4 +1,5 @@
 "use client";
+import { useServer } from "@/context/serverContext";
 import { cn } from "@/lib/utils";
 import { redirect, usePathname } from "next/navigation";
 import { useState } from "react";
@@ -22,6 +23,8 @@ export default function ServerBtn({
   const isActive = pathname.startsWith(`/channel/${id}`);
   const [isDragging, setIsDragging] = useState(false);
   const [isLastDragging, setIsLastDragging] = useState(false);
+  const { servers } = useServer();
+
   return (
     <div className="relative flex w-full items-center justify-center">
       <div
@@ -52,7 +55,7 @@ export default function ServerBtn({
         onDragEnd={() => {
           setIsDragging(false);
         }}
-        onClick={() => redirect(`/channel/${id}`)}
+        onClick={() => redirect(`/channel/${id}/${servers[index].room[0].id}`)}
         className={cn(
           "peer group flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl bg-gray-800 hover:bg-indigo-500",
           isActive && "bg-indigo-500",

@@ -4,7 +4,6 @@ import { redirect } from "next/navigation";
 import SideNavBar from "./_components/sideNavBar";
 import HeaderBar from "./_components/headerBar";
 import ListChannelBar from "./_components/listChannelBar";
-import { ChannelProvider } from "@/context/channelContext";
 import { getUser } from "./_getData/getUser";
 import { ServerProvider } from "@/context/serverContext";
 import getServer from "./_getData/getServer";

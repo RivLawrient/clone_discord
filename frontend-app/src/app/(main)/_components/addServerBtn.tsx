@@ -1,5 +1,5 @@
 "use client";
-import { useChannel } from "@/context/channelContext";
+
 import { useServer } from "@/context/serverContext";
 import { cn } from "@/lib/utils";
 import { CameraIcon, Plus, PlusCircleIcon } from "lucide-react";

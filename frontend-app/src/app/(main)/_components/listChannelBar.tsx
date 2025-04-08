@@ -1,16 +1,9 @@
 "use client";
-import { useChannel } from "@/context/channelContext";
+
 import { cn } from "@/lib/utils";
-import {
-  ArrowDown,
-  ChevronDown,
-  Hash,
-  Plus,
-  Settings,
-  UserIcon,
-} from "lucide-react";
+import { ChevronDown, Hash, Plus, Settings, UserIcon } from "lucide-react";
 import { usePathname, useRouter } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 import UserBar from "./userBar";
 import { useServer } from "@/context/serverContext";
 export default function ListChannelBar() {
@@ -53,10 +46,6 @@ function ListMe() {
     </div>
   );
 }
-interface RoomServer {
-  id: string;
-  name: string;
-}
 
 function ListServer() {
   const path = usePathname();
@@ -67,7 +56,6 @@ function ListServer() {
     <div className="flex flex-col">
       <div className="flex h-12 items-center justify-between border-b border-neutral-800 px-3 hover:bg-neutral-800">
         <h1>
-          {/* {channel.channels.map((c) => c.id == path.split("/")[2] && c.name)} */}
           {servers.map(
             (server) => server.id == path.split("/")[2] && server.name,
           )}
@@ -88,14 +76,23 @@ function ListServer() {
             <Plus className="h-4 w-4" />
           </div>
           <div className="flex flex-col items-start">
-            {open &&
-              servers.map(
-                (server) =>
-                  server.id == path.split("/")[2] &&
-                  server.room.map((room) => (
-                    <ListChannel id={room.id} name={room.name} />
-                  )),
-              )}
+            {servers.map(
+              (data) =>
+                data.id == path.split("/")[2] &&
+                data.room.map((room) =>
+                  room.id == path.split("/")[3] ? (
+                    <ListChannel key={room.id} id={room.id} name={room.name} />
+                  ) : (
+                    open && (
+                      <ListChannel
+                        key={room.id}
+                        id={room.id}
+                        name={room.name}
+                      />
+                    )
+                  ),
+                ),
+            )}
           </div>
         </div>
       </div>
