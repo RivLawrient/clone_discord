@@ -18,15 +18,16 @@ class UserController extends Controller
         $data = $request->validated();
         $data['password'] = Hash::make($data['password']);
 
-        $user = User::create($data)->fresh();
+        $user = User::create($data);
         $user->token = Str::uuid();
         $user->token_exp = time() + (60 * 60) * 24; 
         $user->picture = '/api/user_picture/default_picture.png';
+        $user->last_active = now();
         $user->save();
 
         return response()
         ->json([
-            'data' => new UserResource($user)
+            'data' => new UserResource($user->fresh())
         ])
         ->withCookie(cookie('session', $user->token, 60 * 24))
         ->setStatusCode(201);
@@ -87,7 +88,8 @@ class UserController extends Controller
     public function list_user() {
         $user = User::all();
 
+
         return new UserCollection($user);
     }
-    
+
 }

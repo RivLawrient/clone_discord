@@ -2,7 +2,7 @@ import { SearchIcon } from "lucide-react";
 import getFriend from "../../_getData/getFriend";
 
 export default async function MePage() {
-  const datas = await getFriend();
+  const friend = await getFriend();
 
   return (
     <div className="flex h-full flex-col bg-neutral-900">
@@ -22,7 +22,7 @@ export default async function MePage() {
           </div>
 
           {/* friend list */}
-          {datas.map((fr) => (
+          {friend.map((fr) => (
             <FriendList
               key={fr.id}
               name={fr.display_name}

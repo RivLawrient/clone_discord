@@ -1,13 +1,10 @@
 <?php
 
-use App\Events\MessageSent;
 use App\Http\Controllers\MyServerController;
 use App\Http\Controllers\RoomServerController;
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ExampleController;
 use App\Http\Middleware\ApiAuthMiddleware;
-use App\Models\Server;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;

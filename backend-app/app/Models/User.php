@@ -27,6 +27,7 @@ class User extends Model
         'status',
         'about_me',
         'is_online',
+        'last_active',
     ];
     /**
      * Relasi ke model MyServer

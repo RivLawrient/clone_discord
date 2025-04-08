@@ -23,6 +23,7 @@ return new class extends Migration
             $table->string('about_me', 100)->nullable();
             $table->string('picture', 100)->nullable();
             $table->boolean('is_online')->default(false)->nullable(false);
+            $table->timestamp('last_active')->nullable();
             $table->string('token',100)->unique()->nullable();
             $table->integer('token_exp')->nullable();
             $table->timestamps();

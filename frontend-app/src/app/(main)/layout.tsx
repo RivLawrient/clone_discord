@@ -1,13 +1,12 @@
-import DisableRightClick from "@/components/DisableRightClick";
+import { ServerProvider } from "@/context/serverContext";
 import { AuthProvider } from "@/context/authContext";
 import { redirect } from "next/navigation";
+import { getUser } from "./_getData/getUser";
+import DisableRightClick from "@/components/DisableRightClick";
+import ListChannelBar from "./_components/listChannelBar";
 import SideNavBar from "./_components/sideNavBar";
 import HeaderBar from "./_components/headerBar";
-import ListChannelBar from "./_components/listChannelBar";
-import { getUser } from "./_getData/getUser";
-import { ServerProvider } from "@/context/serverContext";
 import getServer from "./_getData/getServer";
-import IdleTimer from "./_components/idleTimer";
 
 export default async function MainLayout({
   children,

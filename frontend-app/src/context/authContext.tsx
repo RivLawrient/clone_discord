@@ -6,14 +6,15 @@ import { createContext, ReactNode, useContext, useState } from "react";
 export interface User {
   id: string;
   display_name: string;
+  banner_color: string;
   username: string;
   email: string;
+  date_of_birth: string;
   status: string;
   about_me: string;
   is_online: boolean;
+  last_active: string;
   picture: string;
-  token: string;
-  token_exp: string;
   created_at: string;
   updated_at: string;
 }
