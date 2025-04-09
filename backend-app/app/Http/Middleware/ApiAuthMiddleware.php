@@ -2,6 +2,8 @@
 
 namespace App\Http\Middleware;
 
+use App\Events\UpdateUser;
+use App\Http\Resources\FriendListResource;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -24,7 +26,11 @@ class ApiAuthMiddleware
             $user = User::select('id', 'token_exp')->where('token', $token)->first();
             if ($user) {
                 if ($user->token_exp > time()) {
-                    User::where('id', $user->id)->update(['last_active' => now()]);
+                    User::where('id', $user->id)->update(['last_active' => time()]);
+                    $ws = $user->select('id', 'last_active')->first();
+                    // event(new UpdateUser(new FriendListResource(User::where('id', $user->id)->first())));
+                    $res = new FriendListResource(User::where('id', $user->id)->first());
+                    event(new UpdateUser($res->toArray($request)));
                     $authenticate = true;
                 }
             }

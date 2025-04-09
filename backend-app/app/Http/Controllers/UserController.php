@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UpdateUser;
 use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
+use App\Http\Resources\FriendListResource;
 use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
@@ -22,7 +24,7 @@ class UserController extends Controller
         $user->token = Str::uuid();
         $user->token_exp = time() + (60 * 60) * 24; 
         $user->picture = '/api/user_picture/default_picture.png';
-        $user->last_active = now();
+        $user->last_active = time();
         $user->save();
 
         return response()
@@ -47,8 +49,9 @@ class UserController extends Controller
         
         $user->token = Str::uuid();
         $user->token_exp = time() + (60 * 60) * 24;
+        $user->last_active = time();
         $user->save();
-        
+       
         return response()
         ->json([
             'data' => new UserResource($user)

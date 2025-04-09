@@ -48,4 +48,10 @@ class User extends Model
     {
         return $this->hasManyThrough(Server::class, MyServer::class, 'user_id', 'id', 'id', 'server_id');
     }
+
+    public function friends()
+    {
+        return $this->hasMany(Friend::class, 'user_id', 'id');
+    }
+    
 }

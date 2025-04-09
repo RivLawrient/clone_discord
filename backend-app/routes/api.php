@@ -1,14 +1,13 @@
 <?php
 
-use App\Events\MessageSent;
-use App\Events\TestEvent;
+use App\Events\TesSubscribedEvent;
 use App\Http\Controllers\MyServerController;
 use App\Http\Controllers\RoomServerController;
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ApiAuthMiddleware;
-use App\Models\User;
 use Illuminate\Http\Request;
+use App\Http\Controllers\FriendController;
 use Illuminate\Support\Facades\Route;
 
 Route::post('/register', [UserController::class, 'register']);
@@ -25,21 +24,17 @@ Route::middleware(ApiAuthMiddleware::class)->group(function() {
     Route::get('/room_server/{server_id}', [RoomServerController::class, 'list'])->where('server_id', '.*');
     Route::post('/room_server', [RoomServerController::class, 'create']);
 
+    Route::post('/friend/add/{friend_id}', [FriendController::class, 'add_friend']);
+    Route::get('/friend/request', [FriendController::class, 'list_request']);
+    Route::post('/friend/accept/{friend_id}', [FriendController::class, 'accept_request']);
+    Route::get('/friend', [FriendController::class,'list_friend']);
 });
 
 Route::get('/user_picture/{filename}', [UserController::class, 'user_picture'])->where('filename', '.*');
 Route::get('/server_picture/{filename}', [ServerController::class, 'server_picture'])->where('filename', '.*');
 
 
-Route::get('/query', function(Request $request) {
-    $data = User::select('id', 'token_exp')->where('token', $request->cookie('session'))->first();
-
-    return $data;
-});
-
-
-Route::post('/send-message', function (Request $request) {
-    $message = $request->input('message');
-    event(new MessageSent($message));
-    return response()->json(['status' => 'Message sent!']);
+Route::get('/query/{id}', function(Request $request, $id) {
+    broadcast(new TesSubscribedEvent($id));
+    return "Event sent!";
 });
