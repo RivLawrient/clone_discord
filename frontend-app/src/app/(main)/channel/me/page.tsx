@@ -1,9 +1,50 @@
+"use client";
 import { SearchIcon } from "lucide-react";
-import getFriend from "../../_getData/getFriend";
+import { Friend, useFriend } from "@/context/friendContext";
+import { useEffect, useState } from "react";
+import { useAuth } from "@/context/authContext";
+import FriendList from "./FriendList";
+export default function MePage() {
+  const { friends, setFriends } = useFriend();
+  const { user } = useAuth();
 
-export default async function MePage() {
-  const friend = await getFriend();
+  useEffect(() => {
+    const socket = new WebSocket(process.env.WS_API_PUBLIC!);
+    socket.onopen = () => {
+      console.log("Connected to server");
 
+      socket.send(
+        JSON.stringify({
+          event: "pusher:subscribe",
+          data: {
+            channel: "user-data",
+          },
+        }),
+      );
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        console.log(data);
+        if (data.event === "update-user") {
+          const res = JSON.parse(data.data);
+          const users: Friend = res.user;
+          console.log(users);
+          if (user?.id != users.id) {
+            setFriends(
+              friends.map((prev) => (prev.id == users.id ? users : prev)),
+            );
+          }
+        }
+        if (data.event === "pusher:ping") {
+          socket.send(
+            JSON.stringify({
+              event: "pusher:pong",
+            }),
+          );
+        }
+      };
+    };
+  }, []);
   return (
     <div className="flex h-full flex-col bg-neutral-900">
       <div className="min-h-12 w-full border-t border-neutral-700"></div>
@@ -22,11 +63,11 @@ export default async function MePage() {
           </div>
 
           {/* friend list */}
-          {friend.map((fr) => (
+          {friends.map((fr) => (
             <FriendList
               key={fr.id}
               name={fr.display_name}
-              status={fr.is_online}
+              last_active={fr.last_active}
               picture={fr.picture}
             />
           ))}
@@ -37,21 +78,26 @@ export default async function MePage() {
   );
 }
 
-function FriendList(props: { name: string; status: boolean; picture: string }) {
-  return (
-    <div className="flex h-[60px] cursor-pointer items-center justify-start border-y border-neutral-700 py-3 text-sm hover:rounded-lg hover:border-none hover:bg-neutral-800">
-      {/* <div className="mr-2 h-8 w-8 rounded-full bg-neutral-800"></div> */}
-      <img
-        src={props.picture}
-        alt="profile"
-        className="mr-2 h-8 w-8 rounded-full"
-      />
-      <div>
-        <h1 className="font-bold">{props.name}</h1>
-        <p className="text-xs text-neutral-400">
-          {props.status ? "Online" : "Offline"}
-        </p>
-      </div>
-    </div>
-  );
-}
+// function FriendListaaaa(props: {
+//   name: string;
+//   last_active: number;
+//   picture: string;
+// }) {
+//   return (
+//     <div className="flex h-[60px] cursor-pointer items-center justify-start border-y border-neutral-700 py-3 text-sm hover:rounded-lg hover:border-none hover:bg-neutral-800">
+//       <img
+//         src={props.picture}
+//         alt="profile"
+//         className="mr-2 h-8 w-8 rounded-full"
+//       />
+//       <div>
+//         <h1 className="font-bold">{props.name}</h1>
+//         <p className="text-xs text-neutral-400">
+//           {Math.floor(new Date().getTime() / 1000) - props.last_active > 30
+//             ? "Offline"
+//             : "Online"}
+//         </p>
+//       </div>
+//     </div>
+//   );
+// }

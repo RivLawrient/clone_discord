@@ -7,6 +7,8 @@ import ListChannelBar from "./_components/listChannelBar";
 import SideNavBar from "./_components/sideNavBar";
 import HeaderBar from "./_components/headerBar";
 import getServer from "./_getData/getServer";
+import getFriend from "./_getData/getFriend";
+import { FriendProvider } from "@/context/friendContext";
 
 export default async function MainLayout({
   children,
@@ -19,19 +21,21 @@ export default async function MainLayout({
   }
 
   const servers = await getServer();
+  const friends = await getFriend();
   return (
     <AuthProvider user={user}>
       <ServerProvider servers={servers ?? []}>
-        <DisableRightClick />
-        {/* <IdleTimer /> */}
-        <div className="bg-foreground fixed flex h-screen w-screen flex-col">
-          <HeaderBar />
-          <div className="flex h-full text-white">
-            <SideNavBar />
-            <ListChannelBar />
-            <div className="w-full bg-neutral-900">{children}</div>
+        <FriendProvider friends={friends ?? []}>
+          <DisableRightClick />
+          <div className="bg-foreground fixed flex h-screen w-screen flex-col">
+            <HeaderBar />
+            <div className="flex h-full text-white">
+              <SideNavBar />
+              <ListChannelBar />
+              <div className="w-full bg-neutral-900">{children}</div>
+            </div>
           </div>
-        </div>
+        </FriendProvider>
       </ServerProvider>
     </AuthProvider>
   );

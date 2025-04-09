@@ -13,7 +13,7 @@ export interface User {
   status: string;
   about_me: string;
   is_online: boolean;
-  last_active: string;
+  last_active: number;
   picture: string;
   created_at: string;
   updated_at: string;
