@@ -23,9 +23,9 @@ export default async function MainLayout({
   const servers = await getServer();
   const friends = await getFriend();
   return (
-    <AuthProvider user={user}>
-      <ServerProvider servers={servers ?? []}>
-        <FriendProvider friends={friends ?? []}>
+    <AuthProvider get_user={user}>
+      <ServerProvider get_servers={servers ?? []}>
+        <FriendProvider get_friends={friends ?? []}>
           <DisableRightClick />
           <div className="bg-foreground fixed flex h-screen w-screen flex-col">
             <HeaderBar />

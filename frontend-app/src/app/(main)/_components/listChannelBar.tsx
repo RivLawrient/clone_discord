@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import UserBar from "./userBar";
 import { useServer } from "@/context/serverContext";
+
 export default function ListChannelBar() {
   const path = usePathname();
 

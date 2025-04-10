@@ -11,3 +11,4 @@ export default async function getFriend(): Promise<Friend[]> {
   const data = await response.json();
   return data.data;
 }
+

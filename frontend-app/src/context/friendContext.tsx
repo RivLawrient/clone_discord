@@ -7,6 +7,7 @@ export interface Friend {
   display_name: string;
   picture: string;
   last_active: number;
+  is_online: boolean;
 }
 
 interface friendContextType {
@@ -19,15 +20,18 @@ export const FriendContext = createContext<friendContextType>({
   setFriends: () => {},
 });
 
-export const FriendProvider = (props: {
+export const FriendProvider = ({
+  children,
+  get_friends,
+}: {
   children: ReactNode;
-  friends: Friend[];
+  get_friends: Friend[];
 }) => {
-  const [friends, setFriends] = useState<Friend[]>(props.friends);
+  const [friends, setFriends] = useState<Friend[]>(get_friends);
 
   return (
     <FriendContext.Provider value={{ friends, setFriends }}>
-      {props.children}
+      {children}
     </FriendContext.Provider>
   );
 };

@@ -22,13 +22,20 @@ class ApiAuthMiddleware
         $authenticate = false;
         $user = null;
 
+        $other = User::select('id', 'username', 'display_name', 'picture', 'last_active', 'is_online')->where('is_online', true)->get();
+        foreach ($other as $o) {
+            if ($o->last_active < time() - 60 * 5) {
+                User::where('id', $o->id)->update(['is_online' => false]);
+                event(new UpdateUser(new FriendListResource($o)->toArray($request)));
+            }
+        }
+
         if($token) {
             $user = User::select('id', 'token_exp')->where('token', $token)->first();
             if ($user) {
                 if ($user->token_exp > time()) {
-                    User::where('id', $user->id)->update(['last_active' => time()]);
-                    $ws = $user->select('id', 'last_active')->first();
-                    // event(new UpdateUser(new FriendListResource(User::where('id', $user->id)->first())));
+                    User::where('id', $user->id)->update(['last_active' => time(), 'is_online' => true]);
+
                     $res = new FriendListResource(User::where('id', $user->id)->first());
                     event(new UpdateUser($res->toArray($request)));
                     $authenticate = true;
@@ -38,6 +45,7 @@ class ApiAuthMiddleware
 
         if ($authenticate) {
             // Menyimpan user ID ke dalam request
+            // $request->merge(['username' => $user->username]);
             $request->merge(['user' => $user->id]);
             return $next($request);
         } else {

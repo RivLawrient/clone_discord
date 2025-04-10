@@ -31,15 +31,18 @@ export const ServerContext = createContext<ServerContextType>({
   setServers: () => {},
 });
 
-export const ServerProvider = (props: {
+export const ServerProvider = ({
+  children,
+  get_servers,
+}: {
   children: ReactNode;
-  servers: Server[];
+  get_servers: Server[];
 }) => {
-  const [servers, setServers] = useState<Server[]>(props.servers);
+  const [servers, setServers] = useState<Server[]>(get_servers);
 
   return (
     <ServerContext.Provider value={{ servers, setServers }}>
-      {props.children}
+      {children}
     </ServerContext.Provider>
   );
 };

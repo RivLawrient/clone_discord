@@ -25,7 +25,9 @@ Route::middleware(ApiAuthMiddleware::class)->group(function() {
     Route::post('/room_server', [RoomServerController::class, 'create']);
 
     Route::post('/friend/add/{friend_id}', [FriendController::class, 'add_friend']);
-    Route::get('/friend/request', [FriendController::class, 'list_request']);
+    // Route::get('/friend/request', [FriendController::class, 'list_request']);
+    // Route::get('/friend/accept', [FriendController::class, 'list_accept']);
+    Route::get('/friend/pending', [FriendController::class, 'list_pending']);
     Route::post('/friend/accept/{friend_id}', [FriendController::class, 'accept_request']);
     Route::get('/friend', [FriendController::class,'list_friend']);
 });

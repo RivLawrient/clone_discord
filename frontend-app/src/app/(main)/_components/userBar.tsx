@@ -70,8 +70,8 @@ export default function UserBar() {
   );
 }
 
-function SettingView(props: { setting: boolean }) {
-  if (!props.setting) return null;
+function SettingView({ setting }: { setting: boolean }) {
+  if (!setting) return null;
   return (
     <div className="absolute -top-9 z-[99] flex h-[calc(100vh+36px)] w-screen bg-red-200/50">
       <div className="flex w-7/12 bg-neutral-900">
