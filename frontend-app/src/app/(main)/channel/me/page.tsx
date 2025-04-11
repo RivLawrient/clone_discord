@@ -1,17 +1,16 @@
 "use client";
-import { SearchIcon } from "lucide-react";
+import { Check, SearchIcon, X } from "lucide-react";
 import { Friend, useFriend } from "@/context/friendContext";
-import { useEffect, useState } from "react";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAuth } from "@/context/authContext";
 import { cn } from "@/lib/utils";
+
+type tab = "online" | "all" | "pending" | "add";
 
 export default function MePage() {
   const { friends, setFriends } = useFriend();
   const { user } = useAuth();
-  const [tab, setTab] = useState<"online" | "all" | "pending" | "add">(
-    "online",
-  );
-  const [search, setSearch] = useState("");
+  const [tab, setTab] = useState<tab>("online");
   const [pending, setPending] = useState<{
     request: Friend[];
     accept: Friend[];
@@ -74,46 +73,25 @@ export default function MePage() {
   return (
     <div className="flex h-full flex-col bg-neutral-900">
       <div className="flex min-h-12 w-full items-center gap-4 border-t border-neutral-700 px-4 py-2 text-[14px]">
-        <button
-          onClick={() => setTab("online")}
-          className={cn(
-            "cursor-pointer rounded-lg px-3 py-1 text-neutral-400 hover:opacity-80",
-            tab === "online"
-              ? "bg-neutral-700 text-white hover:bg-neutral-700"
-              : "hover:bg-neutral-700",
-          )}
-        >
-          Online
-        </button>
-        <button
-          onClick={() => setTab("all")}
-          className={cn(
-            "cursor-pointer rounded-lg px-3 py-1 text-neutral-400 hover:opacity-80",
-            tab === "all"
-              ? "bg-neutral-700 text-white hover:bg-neutral-700"
-              : "hover:bg-neutral-700",
-          )}
-        >
-          All
-        </button>
+        <TabBtn
+          label="Online"
+          tab={tab}
+          onClick={() => {
+            setTab("online");
+          }}
+        />
+        <TabBtn label="All" tab={tab} onClick={() => setTab("all")} />
         {(pending.request.length > 0 || pending.accept.length > 0) && (
-          <button
-            onClick={() => setTab("pending")}
-            className={cn(
-              "cursor-pointer rounded-lg px-3 py-1 text-neutral-400 hover:opacity-80",
-              tab === "pending"
-                ? "bg-neutral-700 hover:bg-neutral-700"
-                : "hover:bg-neutral-700",
-            )}
-          >
-            Pending
-          </button>
+          <TabBtn label="Pending" tab={tab} onClick={() => setTab("pending")} />
         )}
+
         <button
           onClick={() => setTab("add")}
           className={cn(
-            "cursor-pointer rounded-lg bg-indigo-500 px-3 py-1 text-white hover:opacity-80",
-            tab === "add" && "bg-indigo-950 text-indigo-500",
+            "cursor-pointer rounded-lg px-3 py-1 transition-all",
+            tab === "add"
+              ? "bg-indigo-950 text-indigo-400"
+              : "bg-indigo-500 text-white hover:opacity-80",
           )}
         >
           Add Friend
@@ -121,118 +99,171 @@ export default function MePage() {
       </div>
 
       <div className="flex h-full border-t border-neutral-700">
-        <div className="w-full border-neutral-700 p-6">
+        <div className="w-full border-neutral-700">
           {tab == "all" || tab == "online" ? (
-            <ListView />
+            <ListView tab={tab} friends={friends} />
           ) : tab == "pending" ? (
-            <PendingView />
+            <PendingView pending={pending} />
           ) : (
             <AddView />
           )}
         </div>
-        {/* {tab == "all" || tab == "online" ? (
-          <div className="w-full border-neutral-700 p-6">
-            <div className="relative mb-4 flex items-center gap-2">
-              <input
-                type="text"
-                placeholder="Search"
-                onChange={(e) => setSearch(e.target.value)}
-                className="bg-foreground w-full rounded-lg border border-neutral-800 p-2 focus:border-indigo-500 focus:outline-none"
-              />
-              <SearchIcon className="absolute right-0 mr-2 h-4 w-4" />
-            </div>
-            {search.length > 0 ? (
-              <></>
-            ) : (
-              <>
-                <div className="mx-2 my-4 flex flex-col items-center">
-                  <h1 className="self-start text-sm">
-                    {tab === "online" ? "Online" : "All Friends"} -{" "}
-                    {tab === "online"
-                      ? friends.filter((fr) => fr.is_online).length
-                      : friends.length}
-                  </h1>
-                </div>
-              </>
-            )}
-            {tab == "online"
-              ? friends.map((value) =>
-                  value.is_online && search.length == 0 ? (
-                    <FriendList
-                      key={value.id}
-                      id={value.id}
-                      display_name={value.display_name}
-                      username={value.username}
-                      picture={value.picture}
-                      last_active={value.last_active}
-                      is_online={value.is_online}
-                    />
-                  ) : value.is_online && value.display_name.includes(search) ? (
-                    <FriendList
-                      key={value.id}
-                      id={value.id}
-                      display_name={value.display_name}
-                      username={value.username}
-                      picture={value.picture}
-                      last_active={value.last_active}
-                      is_online={value.is_online}
-                    />
-                  ) : null,
-                )
-              : friends.map((value) =>
-                  search.length == 0 ? (
-                    <FriendList
-                      key={value.id}
-                      id={value.id}
-                      display_name={value.display_name}
-                      username={value.username}
-                      picture={value.picture}
-                      last_active={value.last_active}
-                      is_online={value.is_online}
-                    />
-                  ) : value.display_name.includes(search) ? (
-                    <FriendList
-                      key={value.id}
-                      id={value.id}
-                      display_name={value.display_name}
-                      username={value.username}
-                      picture={value.picture}
-                      last_active={value.last_active}
-                      is_online={value.is_online}
-                    />
-                  ) : null,
-                )}
-          </div>
-        ) : tab == "pending" ? (
-          <div></div>
-        ) : tab === "add" ? (
-          <InputFriend />
-        ) : (
-          <div className="w-full border-neutral-700 p-6"></div>
-        )} */}
         <div className="w-96 border-l border-neutral-700 bg-neutral-800"></div>
       </div>
     </div>
   );
 }
 
-function TabBtn() {
-  return <></>;
+function TabBtn({
+  tab,
+  onClick,
+  label,
+}: {
+  tab: tab;
+  onClick: () => void;
+  label: string;
+}) {
+  return (
+    <>
+      <button
+        onClick={onClick}
+        className={cn(
+          "cursor-pointer rounded-lg px-3 py-1 transition-all",
+          tab === label.toLowerCase()
+            ? "bg-neutral-700 text-white hover:bg-neutral-600"
+            : "text-neutral-400 hover:bg-neutral-800 hover:text-white",
+        )}
+      >
+        {label}
+      </button>
+    </>
+  );
 }
 
-function ListView() {
-  return <>list view </>;
+function SearchBar({
+  search,
+  setSearch,
+}: {
+  search: string;
+  setSearch: Dispatch<SetStateAction<string>>;
+}) {
+  return (
+    <div className="relative mb-4 flex items-center gap-2">
+      <input
+        type="text"
+        placeholder="Search"
+        value={search}
+        onChange={(e) => setSearch(e.target.value)}
+        className="bg-foreground w-full rounded-lg border border-neutral-800 p-2 focus:border-indigo-500 focus:outline-none"
+      />
+      {search != "" ? (
+        <X
+          color="grey"
+          onClick={() => setSearch("")}
+          className="absolute right-0 mr-2 h-6 w-6 cursor-pointer"
+        />
+      ) : (
+        <SearchIcon color="gray" className="absolute right-0 mr-2 h-4 w-4" />
+      )}
+    </div>
+  );
 }
 
-function PendingView() {
-  return <>pending view</>;
+function ListView({ tab, friends }: { tab: tab; friends: Friend[] }) {
+  const [search, setSearch] = useState("");
+  return (
+    <div className="p-6">
+      <SearchBar search={search} setSearch={setSearch} />
+      <div className="mx-2 my-4 flex flex-col items-center">
+        <h1 className="self-start text-sm">
+          {tab === "online" ? "Online" : "All Friends"} -{" "}
+          {tab === "online"
+            ? friends.filter((fr) => fr.is_online).length
+            : friends.length}
+        </h1>
+      </div>
+      {friends.map((value, index) =>
+        tab === "online" &&
+        value.is_online &&
+        value.display_name.includes(search) ? (
+          <FriendList
+            key={index}
+            display_name={value.display_name}
+            id={value.id}
+            is_online={value.is_online}
+            last_active={value.last_active}
+            picture={value.picture}
+            username={value.username}
+            isLast={index == friends.length - 1}
+          />
+        ) : tab === "all" && value.display_name.includes(search) ? (
+          <FriendList
+            key={index}
+            display_name={value.display_name}
+            id={value.id}
+            is_online={value.is_online}
+            last_active={value.last_active}
+            picture={value.picture}
+            username={value.username}
+            isLast={index == friends.length - 1}
+          />
+        ) : null,
+      )}
+    </div>
+  );
+}
+
+function PendingView({
+  pending,
+}: {
+  pending: { request: Friend[]; accept: Friend[] };
+}) {
+  const [search, setSearch] = useState("");
+  return (
+    <div className="p-6">
+      <SearchBar search={search} setSearch={setSearch} />
+      <div className="mx-2 my-4 flex flex-col items-center">
+        <h1 className="self-start text-sm">
+          {"Received -" + pending.accept.length}
+        </h1>
+      </div>
+      {pending.accept.map((value, index) => (
+        <FriendList
+          key={value.id}
+          display_name={value.display_name}
+          id={value.id}
+          is_online={value.is_online}
+          last_active={value.last_active}
+          picture={value.picture}
+          username={value.username}
+          isLast={index == pending.accept.length - 1}
+          isRequest={true}
+          isAcc={true}
+        />
+      ))}
+      <div className="mx-2 my-4 flex flex-col items-center">
+        <h1 className="self-start text-sm">
+          {"Sent -" + pending.request.length}
+        </h1>
+      </div>
+      {pending.request.map((value, index) => (
+        <FriendList
+          key={value.id}
+          display_name={value.display_name}
+          id={value.id}
+          is_online={value.is_online}
+          last_active={value.last_active}
+          picture={value.picture}
+          username={value.username}
+          isLast={index == pending.request.length - 1}
+          isRequest={true}
+        />
+      ))}
+    </div>
+  );
 }
 
 function AddView() {
-  return <>add view</>;
-}
-
-function InputFriend() {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
@@ -304,7 +335,10 @@ function FriendList({
   picture,
   last_active,
   is_online,
-}: Friend) {
+  isLast,
+  isRequest,
+  isAcc,
+}: Friend & { isLast?: boolean; isRequest?: boolean; isAcc?: boolean }) {
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
 
   useEffect(() => {
@@ -320,7 +354,12 @@ function FriendList({
 
   const isOnline = now - last_active < 60 * 5;
   return (
-    <div className="group relative flex h-[60px] cursor-pointer items-center justify-start border-y border-neutral-700 px-2 py-3 text-sm hover:rounded-lg hover:border-none hover:bg-neutral-800">
+    <div
+      className={cn(
+        "group relative flex h-[60px] cursor-pointer items-center border-y border-neutral-700 px-2 py-3 text-sm hover:rounded-lg hover:border-none hover:bg-neutral-800",
+        isLast && "border-b-0",
+      )}
+    >
       <div className="relative mr-2">
         <img
           src={picture}
@@ -332,21 +371,40 @@ function FriendList({
               : "object-cover",
           )}
         />
-        <div
-          className={cn(
-            "absolute -right-0.5 -bottom-0.5 flex h-4 w-4 items-center justify-center rounded-full border-[4px] border-neutral-900 group-hover:border-neutral-800",
-            isOnline ? "bg-green-500" : "bg-gray-500",
-          )}
-        />
+        {!isRequest && (
+          <div
+            className={cn(
+              "absolute -right-0.5 -bottom-0.5 flex h-4 w-4 items-center justify-center rounded-full border-[4px] border-neutral-900 group-hover:border-neutral-800",
+              isOnline ? "bg-green-500" : "bg-gray-500",
+            )}
+          />
+        )}
       </div>
 
-      <div>
-        <h1 className="font-bold">{display_name}</h1>
+      <div className="flex-1">
+        <h1 className="flex items-center font-bold">
+          {display_name}
+          <span className="ml-3 hidden text-xs font-normal group-hover:block">
+            {username}
+          </span>
+        </h1>
         <p className="text-xs text-neutral-400">
-          {is_online ? "Online" : "Offline"}
-          {/* {now - props.last_active > 60 * 5 ? "Offline" : "Online"} */}
+          {isRequest ? username : isOnline ? "Online" : "Offline"}
         </p>
       </div>
+      {isRequest && (
+        <div className="flex gap-6">
+          {/* TODO: FUNCTION ACCEPT AND DECLINE OR CANCEL REQUEST*/}
+          {isAcc && (
+            <button className="group/acc hover:bg-foreground cursor-pointer rounded-full">
+              <Check className="size-10 stroke-neutral-500 p-2 group-hover/acc:stroke-green-500" />
+            </button>
+          )}
+          <button className="group/dec hover:bg-foreground cursor-pointer rounded-full">
+            <X className="size-10 stroke-neutral-500 p-2 group-hover/dec:stroke-red-500" />
+          </button>
+        </div>
+      )}
     </div>
   );
 }
