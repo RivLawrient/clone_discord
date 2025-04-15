@@ -12,8 +12,8 @@ export default async function getServer(): Promise<Server[] | null> {
       Cookie: `session=${cookie.get("session")?.value}`,
     },
   }).then(async (res) => {
-    const data = await res.json();
     if (res.ok) {
+      const data = await res.json();
       return data.data;
     }
     return null;

@@ -10,13 +10,23 @@ export interface Friend {
   is_online: boolean;
 }
 
-interface friendContextType {
+export interface ListFriend {
   friends: Friend[];
-  setFriends: (friends: Friend[]) => void;
+  accept: Friend[];
+  request: Friend[];
+}
+
+interface friendContextType {
+  friends: ListFriend;
+  setFriends: (friends: ListFriend) => void;
 }
 
 export const FriendContext = createContext<friendContextType>({
-  friends: [],
+  friends: {
+    friends: [],
+    request: [],
+    accept: [],
+  },
   setFriends: () => {},
 });
 
@@ -25,9 +35,9 @@ export const FriendProvider = ({
   get_friends,
 }: {
   children: ReactNode;
-  get_friends: Friend[];
+  get_friends: ListFriend;
 }) => {
-  const [friends, setFriends] = useState<Friend[]>(get_friends);
+  const [friends, setFriends] = useState<ListFriend>(get_friends);
 
   return (
     <FriendContext.Provider value={{ friends, setFriends }}>

@@ -25,7 +25,7 @@ export default async function MainLayout({
   return (
     <AuthProvider get_user={user}>
       <ServerProvider get_servers={servers ?? []}>
-        <FriendProvider get_friends={friends ?? []}>
+        <FriendProvider get_friends={friends}>
           <DisableRightClick />
           <div className="bg-foreground fixed flex h-screen w-screen flex-col">
             <HeaderBar />

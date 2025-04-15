@@ -6,6 +6,7 @@ import { usePathname, useRouter } from "next/navigation";
 import { useState } from "react";
 import UserBar from "./userBar";
 import { useServer } from "@/context/serverContext";
+import { useFriend } from "@/context/friendContext";
 
 export default function ListChannelBar() {
   const path = usePathname();
@@ -23,6 +24,8 @@ export default function ListChannelBar() {
 function ListMe() {
   const pathname = usePathname();
   const router = useRouter();
+
+  const { friends, setFriends } = useFriend();
   return (
     <div className="flex w-full flex-col">
       <div className="h-12 border-b border-neutral-800 p-2">
@@ -39,8 +42,13 @@ function ListMe() {
             pathname === "/channel/me" && "bg-neutral-800 text-neutral-200",
           )}
         >
-          <UserIcon className="mr-2 h-5 w-5" />
-          Friends
+          <UserIcon className="mr-2 flex h-5 w-5" />
+          <label className="flex-1 text-start">Friends</label>
+          {friends.accept.length != 0 && (
+            <div className="ml-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white">
+              {friends.accept.length}
+            </div>
+          )}
         </button>
         <hr className="mx-4 my-2 border-[1.5px] border-neutral-800" />
       </div>
@@ -71,7 +79,7 @@ function ListServer() {
               onClick={() => setOpen(!open)}
               className="flex items-center gap-1"
             >
-              General{" "}
+              Text Channels{" "}
               <ChevronDown className={cn("h-3 w-3", open && "rotate-180")} />
             </h1>
             <Plus className="h-4 w-4" />

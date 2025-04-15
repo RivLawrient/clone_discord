@@ -11,13 +11,6 @@ export default function MePage() {
   const { friends, setFriends } = useFriend();
   const { user } = useAuth();
   const [tab, setTab] = useState<tab>("online");
-  const [pending, setPending] = useState<{
-    request: Friend[];
-    accept: Friend[];
-  }>({
-    request: [],
-    accept: [],
-  });
 
   useEffect(() => {
     const socket = new WebSocket(process.env.WS_API_PUBLIC!);
@@ -35,17 +28,28 @@ export default function MePage() {
 
       socket.onmessage = (event) => {
         const data = JSON.parse(event.data);
-        console.log(data);
+        // console.log(data);
         if (data.event === "update-user") {
           const res = JSON.parse(data.data);
-          const users: Friend = res.user;
+          const users = res;
           console.log(users);
-          if (user?.id != users.id) {
-            setFriends(
-              friends.map((prev) => (prev.id == users.id ? users : prev)),
-            );
+          if (
+            users.user.accept &&
+            users.user.accept.id != user?.id &&
+            users.user.user_id === user?.id
+          ) {
+            setFriends({
+              ...friends,
+              accept:
+                friends.accept.length === 0
+                  ? [users.user.accept]
+                  : friends.accept.some((v) => v.id === users.user.accept.id)
+                    ? friends.accept
+                    : [...friends.accept, users.user.accept],
+            });
           }
         }
+
         if (data.event === "pusher:ping") {
           socket.send(
             JSON.stringify({
@@ -56,20 +60,6 @@ export default function MePage() {
       };
     };
   }, []);
-
-  useEffect(() => {
-    fetch(`${process.env.HOST_API_PUBLIC}/api/friend/pending`, {
-      method: "GET",
-      credentials: "include",
-    })
-      .then(async (res) => {
-        const data = await res.json();
-        setPending(data.data);
-      })
-      .catch(() => {});
-  }, []);
-
-  const list = friends;
   return (
     <div className="flex h-full flex-col bg-neutral-900">
       <div className="flex min-h-12 w-full items-center gap-4 border-t border-neutral-700 px-4 py-2 text-[14px]">
@@ -81,7 +71,7 @@ export default function MePage() {
           }}
         />
         <TabBtn label="All" tab={tab} onClick={() => setTab("all")} />
-        {(pending.request.length > 0 || pending.accept.length > 0) && (
+        {(friends.request.length > 0 || friends.accept.length > 0) && (
           <TabBtn label="Pending" tab={tab} onClick={() => setTab("pending")} />
         )}
 
@@ -101,12 +91,13 @@ export default function MePage() {
       <div className="flex h-full border-t border-neutral-700">
         <div className="w-full border-neutral-700">
           {tab == "all" || tab == "online" ? (
-            <ListView tab={tab} friends={friends} />
+            <ListView tab={tab} friends={friends.friends} />
           ) : tab == "pending" ? (
-            <PendingView pending={pending} />
+            <PendingView request={friends.request} accept={friends.accept} />
           ) : (
             <AddView />
           )}
+          {/* <AddView /> */}
         </div>
         <div className="w-96 border-l border-neutral-700 bg-neutral-800"></div>
       </div>
@@ -123,18 +114,24 @@ function TabBtn({
   onClick: () => void;
   label: string;
 }) {
+  const { friends, setFriends } = useFriend();
   return (
     <>
       <button
         onClick={onClick}
         className={cn(
-          "cursor-pointer rounded-lg px-3 py-1 transition-all",
+          "flex cursor-pointer items-center justify-center rounded-lg px-3 py-1 transition-all",
           tab === label.toLowerCase()
             ? "bg-neutral-700 text-white hover:bg-neutral-600"
             : "text-neutral-400 hover:bg-neutral-800 hover:text-white",
         )}
       >
         {label}
+        {label == "Pending" && friends.accept.length != 0 && (
+          <div className="ml-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white">
+            {friends.accept.length}
+          </div>
+        )}
       </button>
     </>
   );
@@ -214,20 +211,24 @@ function ListView({ tab, friends }: { tab: tab; friends: Friend[] }) {
 }
 
 function PendingView({
-  pending,
+  request,
+  accept,
 }: {
-  pending: { request: Friend[]; accept: Friend[] };
+  request: Friend[];
+  accept: Friend[];
 }) {
   const [search, setSearch] = useState("");
   return (
     <div className="p-6">
       <SearchBar search={search} setSearch={setSearch} />
       <div className="mx-2 my-4 flex flex-col items-center">
-        <h1 className="self-start text-sm">
-          {"Received -" + pending.accept.length}
-        </h1>
+        {accept.length != 0 && (
+          <h1 className="self-start text-sm">
+            {"Received - " + accept.length}
+          </h1>
+        )}
       </div>
-      {pending.accept.map((value, index) => (
+      {accept.map((value, index) => (
         <FriendList
           key={value.id}
           display_name={value.display_name}
@@ -236,17 +237,17 @@ function PendingView({
           last_active={value.last_active}
           picture={value.picture}
           username={value.username}
-          isLast={index == pending.accept.length - 1}
+          isLast={index == accept.length - 1}
           isRequest={true}
           isAcc={true}
         />
       ))}
       <div className="mx-2 my-4 flex flex-col items-center">
-        <h1 className="self-start text-sm">
-          {"Sent -" + pending.request.length}
-        </h1>
+        {request.length != 0 && (
+          <h1 className="self-start text-sm">{"Sent - " + request.length}</h1>
+        )}
       </div>
-      {pending.request.map((value, index) => (
+      {request.map((value, index) => (
         <FriendList
           key={value.id}
           display_name={value.display_name}
@@ -255,7 +256,7 @@ function PendingView({
           last_active={value.last_active}
           picture={value.picture}
           username={value.username}
-          isLast={index == pending.request.length - 1}
+          isLast={index == request.length - 1}
           isRequest={true}
         />
       ))}
@@ -267,6 +268,8 @@ function AddView() {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
+  const { friends, setFriends } = useFriend();
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -277,6 +280,34 @@ function AddView() {
       .then(async (res) => {
         const data = await res.json();
         if (res.ok) {
+          setFriends({
+            ...friends,
+            request:
+              friends.request.length === 0
+                ? [
+                    {
+                      id: data.request.id,
+                      username: data.request.username,
+                      display_name: data.request.display_name,
+                      picture: data.request.picture,
+                      last_active: data.request.last_active,
+                      is_online: data.request.is_online,
+                    },
+                  ]
+                : friends.request.some((v) => v.id === data.request.id)
+                  ? friends.request
+                  : [
+                      ...friends.request,
+                      {
+                        id: data.request.id,
+                        username: data.request.username,
+                        display_name: data.request.display_name,
+                        picture: data.request.picture,
+                        last_active: data.request.last_active,
+                        is_online: data.request.is_online,
+                      },
+                    ],
+          });
           setError(`Success! Your friend request to ${input} has been sent.`);
         } else {
           setError(data.message);
@@ -352,7 +383,6 @@ function FriendList({
     return () => clearInterval(interval);
   }, []);
 
-  const isOnline = now - last_active < 60 * 5;
   return (
     <div
       className={cn(
@@ -375,7 +405,7 @@ function FriendList({
           <div
             className={cn(
               "absolute -right-0.5 -bottom-0.5 flex h-4 w-4 items-center justify-center rounded-full border-[4px] border-neutral-900 group-hover:border-neutral-800",
-              isOnline ? "bg-green-500" : "bg-gray-500",
+              is_online ? "bg-green-500" : "bg-gray-500",
             )}
           />
         )}
@@ -389,7 +419,7 @@ function FriendList({
           </span>
         </h1>
         <p className="text-xs text-neutral-400">
-          {isRequest ? username : isOnline ? "Online" : "Offline"}
+          {isRequest ? username : is_online ? "Online" : "Offline"}
         </p>
       </div>
       {isRequest && (
