@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Events\UpdateUser;
 use App\Models\Friend;
 use App\Models\User;
 use App\Http\Resources\FriendListResource;
@@ -9,10 +10,10 @@ use Illuminate\Http\Request;
 
 class FriendController extends Controller
 {
-    //
     public function add_friend(Request $request, $friend_username) {
-        $check = User::where('username', $friend_username)->first();
-        
+        $check = User
+        ::where('username', $friend_username)
+        ->first();
         if (!$check) {
             return response()->json([
                 'message' => 'Hm, didn’t work. Double check that the username is correct.'
@@ -24,11 +25,27 @@ class FriendController extends Controller
                 ], 400);
             }
         }
+
         
-        $friend = Friend::where('user_id', $request->user)->where('friend_id', $check['id'])->first();
+        $friend = Friend
+        ::where('user_id', $request->user)
+        ->where('friend_id', $check['id'])
+        ->select('id')
+        ->first();
         if ($friend) {
             return response()->json([
-                'message' => 'User already in your friend list'
+                'message' => 'User already in your list'
+            ], 400);
+        }
+
+        $me = Friend
+        ::where('user_id', $check['id'])
+        ->where('friend_id', $request->user)
+        ->select('id')
+        ->first();
+        if ($me) {
+            return response()->json([
+                'message' => 'User already in your list'
             ], 400);
         }
 
@@ -38,8 +55,45 @@ class FriendController extends Controller
             'is_accepted' => false
         ]);
 
+        event(new UpdateUser([
+            'accept' => new FriendListResource(User::where('id', $request->user)->first()),
+            'user_id' => $check->id
+        ]));
+
+
         return response()->json([
-            'message' => 'Friend request sent'
+            'request' => new FriendListResource($check)
+        ], 200);
+    }
+
+    public function list_friend(Request $request) {
+        $list = Friend
+        ::where('user_id', $request->user)
+        ->where('is_accepted', true)
+        // ->select()
+        ->join('users', 'friends.friend_id', '=', 'users.id')
+        ->get();
+
+        $accept = Friend
+        ::where('friend_id', $request->user)
+        ->where('is_accepted', false)
+        ->join('users', 'friends.user_id', '=', 'users.id')
+        ->get();
+
+        $request = Friend
+        ::where('user_id', $request->user)
+        ->where('is_accepted', false)
+        ->join('users', 'friends.friend_id', '=', 'users.id')
+        ->get();
+
+        
+        return response()->json([
+            'data' => [
+                'friends' => FriendListResource::collection($list),
+                'accept' => FriendListResource::collection($accept),
+                'request' => FriendListResource::collection($request)
+
+            ]
         ], 200);
     }
 
@@ -83,17 +137,12 @@ class FriendController extends Controller
         $req->is_accepted = true;
         $req->save();
 
+        
+
         return response()->json([
             'message' => new FriendListResource(User::find($friend_id))
         ], 200);
     }
 
-    public function list_friend(Request $request) {
-        $list = Friend::where('user_id', $request->user)->where('is_accepted', true)
-        ->join('users', 'friends.friend_id', '=', 'users.id')
-        ->get();
-        return response()->json([
-            'data' => FriendListResource::collection($list)
-        ], 200);
-    }
+   
 }

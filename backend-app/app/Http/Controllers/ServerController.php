@@ -38,6 +38,8 @@ class ServerController extends Controller
             'server_id' => $server->id
         ])->fresh();
 
+    //todo: MEMBERS
+
         return response()->json([
             'data' => new ServerResource($server),
         ])->setStatusCode(201);
@@ -58,5 +60,17 @@ class ServerController extends Controller
         
         return response()->file($path);
     }
-    
+   
+    public function show($id) {
+        $server = Server::with(['roomServers'])->find($id);
+        if (!$server) {
+            return response()->json([
+                'errors' => [
+                    'message' => ['Server not found']
+                ]
+            ])->setStatusCode(404);
+        }
+        
+        return new ServerResource($server);
+    }
 }

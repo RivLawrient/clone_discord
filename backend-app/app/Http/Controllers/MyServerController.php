@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\MyServer;
 use App\Http\Resources\ServerCollection;
+use App\Models\RoomServer;
+use App\Models\Server;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Database\QueryException;
@@ -37,11 +39,17 @@ class MyServerController extends Controller
         }
     }
 
-    public function list(Request $request): ServerCollection {
-        $myServers = MyServer::with(['server.roomServers'])
-        ->get()
-        ->pluck('server')
-        ->filter();
+    public function list(Request $request) {
+        // $myServers = MyServer::with(['server.roomServers'])
+        // ->get()
+        // ->pluck('server')
+        // ->filter();
+
+        $myServers = Server::whereIn(
+            'id',
+            MyServer::where('user_id', $request->user)->pluck('server_id')
+        )->get();
+        
 
         
         return new ServerCollection($myServers);

@@ -26,7 +26,10 @@ class ApiAuthMiddleware
         foreach ($other as $o) {
             if ($o->last_active < time() - 60 * 5) {
                 User::where('id', $o->id)->update(['is_online' => false]);
-                event(new UpdateUser(new FriendListResource($o)->toArray($request)));
+                // event(new UpdateUser(new FriendListResource($o)->toArray($request)));
+                event(new UpdateUser([
+                    'friends' => new FriendListResource($o),
+                ]));
             }
         }
 
@@ -37,7 +40,10 @@ class ApiAuthMiddleware
                     User::where('id', $user->id)->update(['last_active' => time(), 'is_online' => true]);
 
                     $res = new FriendListResource(User::where('id', $user->id)->first());
-                    event(new UpdateUser($res->toArray($request)));
+                    // event(new UpdateUser($res->toArray($request)));
+                    event(new UpdateUser([
+                        'friends' => $res,
+                    ]));
                     $authenticate = true;
                 }
             }

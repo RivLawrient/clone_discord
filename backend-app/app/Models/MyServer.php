@@ -39,4 +39,15 @@ class MyServer extends Model
     {
         return $this->belongsTo(Server::class, 'server_id', 'id');
     }
+
+    
+    /**
+     * Relasi ke model RoomServer
+     *
+     * @return BelongsTo
+     */ 
+    public function roomServers(): BelongsTo
+    {
+        return $this->belongsTo(RoomServer::class, 'server_id', 'id');
+    }    
 }
