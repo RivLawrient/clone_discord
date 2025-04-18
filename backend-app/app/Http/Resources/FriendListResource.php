@@ -18,7 +18,7 @@ class FriendListResource extends JsonResource
             'id' => $this->id,
             'username' => $this->username,
             'display_name' => $this->display_name,
-            'picture' =>  request()->getSchemeAndHttpHost(). $this->picture,
+            'picture' => $this->picture,
             'last_active' => $this->last_active,
             'is_online' => $this->is_online
         ];

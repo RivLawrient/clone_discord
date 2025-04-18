@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Events\UpdateUser;
+use App\Events\UserCurrent;
 use App\Models\Friend;
 use App\Models\User;
 use App\Http\Resources\FriendListResource;
@@ -55,11 +56,12 @@ class FriendController extends Controller
             'is_accepted' => false
         ]);
 
-        event(new UpdateUser([
-            'accept' => new FriendListResource(User::where('id', $request->user)->first()),
-            'user_id' => $check->id
-        ]));
-
+        // event(new UpdateUser([
+        //     'accept' => new FriendListResource(User::where('id', $request->user)->first()),
+        //     'user_id' => $check->id
+        // ]));
+        event(new UserCurrent( $check->id));
+        event(new UserCurrent( $request->user));
 
         return response()->json([
             'request' => new FriendListResource($check)
@@ -70,7 +72,6 @@ class FriendController extends Controller
         $list = Friend
         ::where('user_id', $request->user)
         ->where('is_accepted', true)
-        // ->select()
         ->join('users', 'friends.friend_id', '=', 'users.id')
         ->get();
 
@@ -96,37 +97,12 @@ class FriendController extends Controller
             ]
         ], 200);
     }
-
-    public function list_request(Request $request) {
-        $lsit = Friend::where('user_id', $request->user)
-        ->where('is_accepted', false)
-        ->join('users', 'friends.friend_id', '=', 'users.id')
-        ->get();
-        return FriendListResource::collection($lsit);
-    }
-    
-    public function list_accept(Request $request) {
-        $req = Friend::where('friend_id', $request->user)->where('is_accepted', false)
-        ->join('users', 'friends.user_id', '=', 'users.id')
-        ->get();
-        return  FriendListResource::collection($req);
-    }
-
-    public function list_pending(Request $request) {
-        $req = $this->list_request($request);
-        $acc = $this->list_accept($request);
-        return response()->json([
-            'data' => [
-                'request' => $req,
-                'accept' => $acc
-            ]
-        ], 200);
-    }
+ 
 
     public function accept_request(Request $request, $friend_id) {
         $req = Friend
-        ::where('user_id', $request->user)
-        ->where('friend_id', $friend_id)
+        ::where('user_id', $friend_id)
+        ->where('friend_id', $request->user)
         ->where('is_accepted', false)
         ->first();
         if (!$req) {
@@ -137,12 +113,26 @@ class FriendController extends Controller
         $req->is_accepted = true;
         $req->save();
 
-        
+       Friend
+       ::create([
+            'user_id' => $request->user,
+            'friend_id' => $friend_id,
+            'is_accepted' => true
+        ]);
+
+        // event(new UpdateUser([
+        //     'friends' => new FriendListResource(User::where('id', $request->user)->first()),
+        //     'user_id' => $friend_id
+        // ]));
+
+        event(new UserCurrent( $friend_id));
+        event(new UserCurrent( $request->user));
 
         return response()->json([
-            'message' => new FriendListResource(User::find($friend_id))
+            'data' => new FriendListResource(User::find($friend_id))
         ], 200);
     }
 
-   
+//    todo: yang request hilangkan di pending dan add ke friend list 
+// websocket nya friendnya 'request->user' dan target accountny 'friend_id'
 }
