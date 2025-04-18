@@ -1,10 +1,8 @@
 "use client";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { Check, SearchIcon, X } from "lucide-react";
 import { Friend, useFriend } from "@/context/friendContext";
-import { Dispatch, SetStateAction, useEffect, useState } from "react";
-import { useAuth } from "@/context/authContext";
 import { cn } from "@/lib/utils";
-import { set } from "date-fns";
 
 type tab = "online" | "all" | "pending" | "add";
 
@@ -131,10 +129,14 @@ function ListView({ tab, friends }: { tab: tab; friends: Friend[] }) {
             : friends.length}
         </h1>
       </div>
-      {friends.map((value, index) =>
-        tab === "online" &&
-        value.is_online &&
-        value.display_name.includes(search) ? (
+      {friends
+        .filter((value) => {
+          const matchesSearch = value.display_name.includes(search);
+          if (tab === "online") return value.is_online && matchesSearch;
+          if (tab === "all") return matchesSearch;
+          return false;
+        })
+        .map((value, index, array) => (
           <FriendList
             key={index}
             display_name={value.display_name}
@@ -143,21 +145,9 @@ function ListView({ tab, friends }: { tab: tab; friends: Friend[] }) {
             last_active={value.last_active}
             picture={value.picture}
             username={value.username}
-            isLast={index == friends.length - 1}
+            isLast={index === array.length - 1}
           />
-        ) : tab === "all" && value.display_name.includes(search) ? (
-          <FriendList
-            key={index}
-            display_name={value.display_name}
-            id={value.id}
-            is_online={value.is_online}
-            last_active={value.last_active}
-            picture={value.picture}
-            username={value.username}
-            isLast={index == friends.length - 1}
-          />
-        ) : null,
-      )}
+        ))}
     </div>
   );
 }
