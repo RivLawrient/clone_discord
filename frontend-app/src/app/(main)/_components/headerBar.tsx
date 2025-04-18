@@ -18,7 +18,7 @@ export default function HeaderBar() {
   }, [pathname]);
 
   return (
-    <header className="header bg-foreground flex h-[36px] w-full items-center justify-center text-white">
+    <header className="header bg-foreground flex min-h-[36px] w-full items-center justify-center text-white">
       {pathname.split("/").pop() == "me" ? (
         <div className="flex items-center gap-2 text-sm">
           <UserIcon className="h-4 w-4" />
@@ -26,9 +26,9 @@ export default function HeaderBar() {
         </div>
       ) : (
         servers.map(
-          (data) =>
-            data.id == pathname.split("/").pop() && (
-              <div key={data.id}>{data.name}</div>
+          (value) =>
+            value.id == pathname.split("/")[2] && (
+              <div key={value.id}>{value.name}</div>
             ),
         )
       )}

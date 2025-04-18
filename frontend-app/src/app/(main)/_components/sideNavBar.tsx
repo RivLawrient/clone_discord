@@ -30,7 +30,7 @@ export default function SideNavBar() {
             )}
           />
           {friends.accept.length != 0 && (
-            <div className="outline-foreground absolute right-4 bottom-0 ml-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white outline-2">
+            <div className="outline-foreground pointer-events-none absolute right-4 bottom-0 ml-2 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-white outline-2">
               {friends.accept.length}
             </div>
           )}

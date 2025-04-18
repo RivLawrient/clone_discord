@@ -4,62 +4,14 @@ import { Friend, useFriend } from "@/context/friendContext";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useAuth } from "@/context/authContext";
 import { cn } from "@/lib/utils";
+import { set } from "date-fns";
 
 type tab = "online" | "all" | "pending" | "add";
 
 export default function MePage() {
-  const { friends, setFriends } = useFriend();
-  const { user } = useAuth();
+  const { friends } = useFriend();
   const [tab, setTab] = useState<tab>("online");
 
-  useEffect(() => {
-    const socket = new WebSocket(process.env.WS_API_PUBLIC!);
-    socket.onopen = () => {
-      console.log("Connected to server");
-
-      socket.send(
-        JSON.stringify({
-          event: "pusher:subscribe",
-          data: {
-            channel: "user-data",
-          },
-        }),
-      );
-
-      socket.onmessage = (event) => {
-        const data = JSON.parse(event.data);
-        // console.log(data);
-        if (data.event === "update-user") {
-          const res = JSON.parse(data.data);
-          const users = res;
-          console.log(users);
-          if (
-            users.user.accept &&
-            users.user.accept.id != user?.id &&
-            users.user.user_id === user?.id
-          ) {
-            setFriends({
-              ...friends,
-              accept:
-                friends.accept.length === 0
-                  ? [users.user.accept]
-                  : friends.accept.some((v) => v.id === users.user.accept.id)
-                    ? friends.accept
-                    : [...friends.accept, users.user.accept],
-            });
-          }
-        }
-
-        if (data.event === "pusher:ping") {
-          socket.send(
-            JSON.stringify({
-              event: "pusher:pong",
-            }),
-          );
-        }
-      };
-    };
-  }, []);
   return (
     <div className="flex h-full flex-col bg-neutral-900">
       <div className="flex min-h-12 w-full items-center gap-4 border-t border-neutral-700 px-4 py-2 text-[14px]">
@@ -114,7 +66,7 @@ function TabBtn({
   onClick: () => void;
   label: string;
 }) {
-  const { friends, setFriends } = useFriend();
+  const { friends } = useFriend();
   return (
     <>
       <button
@@ -268,8 +220,6 @@ function AddView() {
   const [input, setInput] = useState("");
   const [error, setError] = useState("");
 
-  const { friends, setFriends } = useFriend();
-
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
@@ -280,34 +230,6 @@ function AddView() {
       .then(async (res) => {
         const data = await res.json();
         if (res.ok) {
-          setFriends({
-            ...friends,
-            request:
-              friends.request.length === 0
-                ? [
-                    {
-                      id: data.request.id,
-                      username: data.request.username,
-                      display_name: data.request.display_name,
-                      picture: data.request.picture,
-                      last_active: data.request.last_active,
-                      is_online: data.request.is_online,
-                    },
-                  ]
-                : friends.request.some((v) => v.id === data.request.id)
-                  ? friends.request
-                  : [
-                      ...friends.request,
-                      {
-                        id: data.request.id,
-                        username: data.request.username,
-                        display_name: data.request.display_name,
-                        picture: data.request.picture,
-                        last_active: data.request.last_active,
-                        is_online: data.request.is_online,
-                      },
-                    ],
-          });
           setError(`Success! Your friend request to ${input} has been sent.`);
         } else {
           setError(data.message);
@@ -371,18 +293,34 @@ function FriendList({
   isAcc,
 }: Friend & { isLast?: boolean; isRequest?: boolean; isAcc?: boolean }) {
   const [now, setNow] = useState(Math.floor(Date.now() / 1000));
+  const { friends, setFriends } = useFriend();
 
   useEffect(() => {
-    const interval = setInterval(
-      () => {
-        setNow(Math.floor(Date.now() / 1000));
-      },
-      1000 * 60 * 5,
-    ); // update setiap detik
+    const interval = setInterval(() => {
+      setNow(Math.floor(Date.now() / 1000));
+    }, 1000 * 60); // update setiap detik
 
     return () => clearInterval(interval);
   }, []);
 
+  const acceptHandle = async () => {
+    await fetch(`${process.env.HOST_API_PUBLIC}/api/friend/accept/${id}`, {
+      method: "POST",
+      credentials: "include",
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok) {
+          setFriends({
+            ...friends,
+            accept: friends.accept.filter((value) => value.id != id),
+          });
+        }
+      })
+      .catch(() => {
+        console.log("error");
+      });
+  };
   return (
     <div
       className={cn(
@@ -392,7 +330,7 @@ function FriendList({
     >
       <div className="relative mr-2">
         <img
-          src={picture}
+          src={process.env.HOST_API_PUBLIC + picture}
           alt="profile"
           className={cn(
             "h-8 w-8 rounded-full",
@@ -426,7 +364,10 @@ function FriendList({
         <div className="flex gap-6">
           {/* TODO: FUNCTION ACCEPT AND DECLINE OR CANCEL REQUEST*/}
           {isAcc && (
-            <button className="group/acc hover:bg-foreground cursor-pointer rounded-full">
+            <button
+              onClick={acceptHandle}
+              className="group/acc hover:bg-foreground cursor-pointer rounded-full"
+            >
               <Check className="size-10 stroke-neutral-500 p-2 group-hover/acc:stroke-green-500" />
             </button>
           )}

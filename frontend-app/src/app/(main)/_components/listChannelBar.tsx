@@ -25,7 +25,7 @@ function ListMe() {
   const pathname = usePathname();
   const router = useRouter();
 
-  const { friends, setFriends } = useFriend();
+  const { friends } = useFriend();
   return (
     <div className="flex w-full flex-col">
       <div className="h-12 border-b border-neutral-800 p-2">
