@@ -28,10 +28,13 @@ class ServerController extends Controller
             $server->save();
         }
 
-        MyServer::create([
+        $myserver = MyServer::create([
             'user_id' => $request->user,
             'server_id' => $server->id
         ]);
+
+        $myserver->role = "owner";
+        $myserver->save();
 
         RoomServer::create([
             'name' => 'general',

@@ -15,6 +15,7 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->string('user_id');
             $table->string('server_id');
+            $table->string('role')->default('member'); // owner, admin, member
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');

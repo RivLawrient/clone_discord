@@ -13,31 +13,31 @@ use Str;
 
 class MyServerController extends Controller
 {
-    public function create(Request $request): JsonResponse {
-        $data = $request->validated();
+    // public function create(Request $request): JsonResponse {
+    //     $data = $request->validated();
 
-        try {
-            $myServer = new MyServer();
-            $myServer->id = Str::uuid();
-            $myServer->user_id = $request->user()->id;
-            $myServer->server_id = $data['server_id'];
-            $myServer->save();
+    //     try {
+    //         $myServer = new MyServer();
+    //         $myServer->id = Str::uuid();
+    //         $myServer->user_id = $request->user()->id;
+    //         $myServer->server_id = $data['server_id'];
+    //         $myServer->save();
             
-            return response()->json([
-                'data' => $myServer
-            ]);
-        } catch (QueryException $e) {
-            // Jika terjadi error unique constraint violation
-            if ($e->getCode() == 23000) {
-                return response()->json([
-                    'errors' => [
-                        'message' => ['Anda sudah memiliki server ini']
-                    ]
-                ])->setStatusCode(400);
-            }
-            throw $e;
-        }
-    }
+    //         return response()->json([
+    //             'data' => $myServer
+    //         ]);
+    //     } catch (QueryException $e) {
+    //         // Jika terjadi error unique constraint violation
+    //         if ($e->getCode() == 23000) {
+    //             return response()->json([
+    //                 'errors' => [
+    //                     'message' => ['Anda sudah memiliki server ini']
+    //                 ]
+    //             ])->setStatusCode(400);
+    //         }
+    //         throw $e;
+    //     }
+    // }
 
     public function list(Request $request) {
         // $myServers = MyServer::with(['server.roomServers'])
