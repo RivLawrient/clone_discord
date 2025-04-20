@@ -8,6 +8,7 @@ export interface Server {
   picture: string;
   description: string;
   is_private: boolean;
+  role: string
   invite_code: string;
   created_at: string;
   updated_at: string;

@@ -1,21 +1,27 @@
 "use client";
 
-import { cn } from "@/lib/utils";
 import { usePathname, useRouter } from "next/navigation";
-import { AddServerBtn } from "./addServerBtn";
+import { AddServerBtn } from "./add-server/addServerBtn";
 import { useServer } from "@/context/serverContext";
-import ServerBtn from "./channelBtn";
 import { useFriend } from "@/context/friendContext";
+import { useEffect } from "react";
+import { cn } from "@/lib/utils";
+import ServerBtn from "./serverBtn";
 
-export default function SideNavBar() {
+export default function SideServerList() {
   const router = useRouter();
   const pathname = usePathname();
   const route = pathname.split("/")[2];
   const { servers } = useServer();
   const { friends } = useFriend();
 
+  // useEffect(() => {
+  //   if (!servers.some((v) => v.id === route)) {
+  //     console.log("gada");
+  //   }
+  // }, []);
   return (
-    <aside className="sidebar bg-foreground h-max-full relative flex min-w-[72px] flex-col items-center gap-2 text-white">
+    <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white">
       <div className="relative flex w-full flex-col items-center justify-center gap-2">
         <button className="peer relative flex w-full items-center justify-center">
           <img
@@ -48,18 +54,23 @@ export default function SideNavBar() {
       </div>
 
       <hr className="w-1/2 border-[1.5px] border-neutral-800" />
-      {servers.map((server) => (
-        <ServerBtn
-          key={server.id}
-          name={server.name}
-          url_img={server.picture}
-          id={server.id}
-          index={servers.indexOf(server)}
-          last={servers.indexOf(server) === servers.length - 1}
-        />
-      ))}
 
-      <AddServerBtn />
+      <div
+        style={{}}
+        className="bg-foreground z-[51] flex w-full flex-col gap-2 overflow-x-clip overflow-y-scroll pb-32"
+      >
+        {servers.map((server) => (
+          <ServerBtn
+            key={server.id}
+            name={server.name}
+            url_img={server.picture}
+            id={server.id}
+            index={servers.indexOf(server)}
+            last={servers.indexOf(server) === servers.length - 1}
+          />
+        ))}
+        <AddServerBtn />
+      </div>
     </aside>
   );
 }

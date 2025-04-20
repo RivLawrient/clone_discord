@@ -3,12 +3,13 @@ import { AuthProvider } from "@/context/authContext";
 import { redirect } from "next/navigation";
 import { getUser } from "./_getData/getUser";
 import DisableRightClick from "@/components/DisableRightClick";
-import ListChannelBar from "./_components/listChannelBar";
-import SideNavBar from "./_components/sideNavBar";
+
 import HeaderBar from "./_components/headerBar";
 import getServer from "./_getData/getServer";
 import getFriend from "./_getData/getFriend";
 import { FriendProvider } from "@/context/friendContext";
+import SideServerList from "./_components/sideServerList";
+import ListChannelBar from "./_components/channel-list/listChannelBar";
 
 export default async function MainLayout({
   children,
@@ -29,10 +30,10 @@ export default async function MainLayout({
           <DisableRightClick />
           <div className="bg-foreground fixed flex h-screen w-screen flex-col">
             <HeaderBar />
-            <div className="flex h-full text-white">
-              <SideNavBar />
+            <div className="flex h-full pt-[36px] text-white">
+              <SideServerList />
               <ListChannelBar />
-              <div className="w-full bg-neutral-900">{children}</div>
+              {children}
             </div>
           </div>
         </FriendProvider>
