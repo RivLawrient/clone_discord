@@ -10,8 +10,8 @@ export default function ListChannelBar() {
 
   return (
     <>
-      <UserBar />
-      <div className="aside bg-foreground relative h-full min-w-[300px] overflow-hidden rounded-l-lg border-t-[1.5px] border-l-[1.5px] border-neutral-800">
+      {/* <UserBar /> */}
+      <div className="aside bg-foreground h-full min-w-[300px] overflow-hidden rounded-l-lg border-t-[1.5px] border-l-[1.5px] border-neutral-800">
         {path.split("/")[2] == "me" ? <ListMe /> : <ListServer />}
       </div>
     </>

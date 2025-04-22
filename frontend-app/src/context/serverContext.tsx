@@ -8,8 +8,9 @@ export interface Server {
   picture: string;
   description: string;
   is_private: boolean;
-  role: string
+  role: string;
   invite_code: string;
+  member: number;
   created_at: string;
   updated_at: string;
   room: RoomServer[];

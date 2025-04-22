@@ -26,7 +26,7 @@ export default function UserBar() {
     <>
       <SettingView setting={setting} />
       <div className="absolute bottom-0 left-0 z-[51] w-[372px] p-2">
-        <div className="flex max-h-[56px] w-full items-center justify-center rounded-sm bg-neutral-900 p-2">
+        <div className="flex max-h-[56px] w-full items-center justify-center rounded-sm bg-neutral-800 p-2">
           <div className="bg-foreground flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
             <img
               src={`${user?.picture}`}
@@ -37,7 +37,7 @@ export default function UserBar() {
               )}
             />
           </div>
-          <div className="group flex grow flex-col pl-3 leading-4 hover:rounded-md hover:bg-neutral-800">
+          <div className="group flex grow flex-col pl-3 leading-4 hover:rounded-md hover:bg-neutral-700">
             <h1 className="text-[14px] font-semibold text-white">
               {user?.display_name}
             </h1>
@@ -49,17 +49,17 @@ export default function UserBar() {
             </p>
           </div>
           <div className="ml-auto flex h-full items-center justify-center gap-0.5 self-end">
-            <button className="my-0.5 cursor-pointer rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-800">
+            <button className="my-0.5 cursor-pointer rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-700">
               <Headphones className="h-5 w-5" />
             </button>
             <button
               onClick={() => {
                 setSetting(true);
               }}
-              className="group my-0.5 flex cursor-pointer items-center justify-center rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-800"
+              className="group my-0.5 flex cursor-pointer items-center justify-center rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-700"
             >
               <Settings className="h-5 w-5 group-hover:animate-spin" />
-              <div className="absolute -top-6 hidden rounded-md border border-neutral-700 bg-neutral-800 p-1.5 text-[12px] text-nowrap text-white group-hover:block">
+              <div className="absolute -top-6 hidden rounded-md border border-neutral-700 bg-neutral-700 p-1.5 text-[12px] text-nowrap text-white group-hover:block">
                 User Settings
               </div>
             </button>

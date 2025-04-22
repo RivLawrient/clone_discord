@@ -7,6 +7,7 @@ import { useFriend } from "@/context/friendContext";
 import { useEffect } from "react";
 import { cn } from "@/lib/utils";
 import ServerBtn from "./serverBtn";
+import DiscoverBtn from "./add-server/discoverBtn";
 
 export default function SideServerList() {
   const router = useRouter();
@@ -70,6 +71,7 @@ export default function SideServerList() {
           />
         ))}
         <AddServerBtn />
+        <DiscoverBtn />
       </div>
     </aside>
   );

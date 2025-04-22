@@ -28,7 +28,22 @@ export default function HeaderBar() {
         servers.map(
           (value) =>
             value.id == pathname.split("/")[2] && (
-              <div key={value.id}>{value.name}</div>
+              <div key={value.id} className="flex items-center gap-2">
+                <div className="z-[2] flex size-5 items-center justify-center overflow-hidden rounded-sm bg-gray-800">
+                  {value.picture ? (
+                    <img
+                      src={value.picture}
+                      alt=""
+                      className="object-contain"
+                    />
+                  ) : (
+                    <span className="text-[12px]">
+                      {value.name[0].toUpperCase()}
+                    </span>
+                  )}
+                </div>
+                {value.name}
+              </div>
             ),
         )
       )}

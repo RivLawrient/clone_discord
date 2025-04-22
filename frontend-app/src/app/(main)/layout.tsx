@@ -10,6 +10,7 @@ import getFriend from "./_getData/getFriend";
 import { FriendProvider } from "@/context/friendContext";
 import SideServerList from "./_components/sideServerList";
 import ListChannelBar from "./_components/channel-list/listChannelBar";
+import UserBar from "./_components/userBar";
 
 export default async function MainLayout({
   children,
@@ -30,6 +31,7 @@ export default async function MainLayout({
           <DisableRightClick />
           <div className="bg-foreground fixed flex h-screen w-screen flex-col">
             <HeaderBar />
+            <UserBar />
             <div className="flex h-full pt-[36px] text-white">
               <SideServerList />
               <ListChannelBar />
