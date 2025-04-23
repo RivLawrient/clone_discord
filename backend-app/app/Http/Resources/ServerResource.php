@@ -32,6 +32,7 @@ class ServerResource extends JsonResource
                 ->first()
                 ?->role,
             'invite_code' => $this->invite_code,
+            'member' => MyServer::where('server_id', $this->id)->count(),
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
             'room' => RoomServerResource::collection($this->roomServers)

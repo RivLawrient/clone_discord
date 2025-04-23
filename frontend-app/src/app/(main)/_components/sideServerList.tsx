@@ -22,7 +22,7 @@ export default function SideServerList() {
   //   }
   // }, []);
   return (
-    <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white">
+    <aside className="sidebar bg-foreground relative flex h-full min-w-[72px] flex-col items-center gap-2 text-white select-none">
       <div className="relative flex w-full flex-col items-center justify-center gap-2">
         <button className="peer relative flex w-full items-center justify-center">
           <img
@@ -49,7 +49,8 @@ export default function SideServerList() {
           )}
         />
 
-        <div className="absolute left-17 z-[51] hidden rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-[14px] font-semibold text-nowrap peer-hover:block">
+        <div className="absolute left-17 z-[51] hidden items-center rounded-lg border border-neutral-800 bg-neutral-900 p-2 text-[14px] font-semibold text-nowrap peer-hover:flex">
+          <div className="absolute -left-1 size-1.5 rotate-45 border-b border-l border-neutral-800 bg-neutral-900" />
           Direct Messages
         </div>
       </div>

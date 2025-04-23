@@ -1,17 +1,45 @@
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useServer } from "@/context/serverContext";
 import { cn } from "@/lib/utils";
-import { RadioGroupIndicator } from "@radix-ui/react-radio-group";
 import { HashIcon, Volume2Icon, X, XIcon } from "lucide-react";
+import { usePathname } from "next/navigation";
 import { useState } from "react";
+import { Tooltip } from "recharts";
 
-interface AddChannelModalProps {
+interface Props {
   isOpen: boolean;
   onClose: () => void;
 }
-export default function AddChannelModal(props: AddChannelModalProps) {
+export default function AddChannelModal(props: Props) {
   const [choise, setChoise] = useState("text");
   const [text, setText] = useState("");
+  const path = usePathname().split("/");
+  const { servers, setServers } = useServer();
+
+  const createHandle = async () => {
+    await fetch(`${process.env.HOST_API_PUBLIC}/api/room_server`, {
+      method: "POST",
+      credentials: "include",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        name: text,
+        server_id: path[2],
+      }),
+    })
+      .then(async (res) => {
+        const data = await res.json();
+        if (res.ok) {
+          setServers(
+            servers.map((v) =>
+              v.id === path[2] ? { ...v, room: [...v.room, data.data] } : v,
+            ),
+          );
+          props.onClose();
+        }
+      })
+      .catch(() => {});
+  };
 
   const ch = ["text", "voice"];
   if (!props.isOpen) return null;
@@ -34,7 +62,6 @@ export default function AddChannelModal(props: AddChannelModalProps) {
           in {choise === "text" ? "Text" : "Voice"} Channels
         </h2>
         <h1 className="mt-4 mb-1">Channel Type</h1>
-
         <div className="flex flex-col gap-2">
           {ch.map((value) => (
             <div
@@ -70,7 +97,6 @@ export default function AddChannelModal(props: AddChannelModalProps) {
             </div>
           ))}
         </div>
-
         <h1 className="mt-6 mb-2 text-xs font-semibold">CHANNEL NAME</h1>
         <div className="flex flex-row items-center gap-2 rounded-lg border border-neutral-700 bg-neutral-900 p-2">
           {choise === "text" ? (
@@ -97,6 +123,7 @@ export default function AddChannelModal(props: AddChannelModalProps) {
             Cancel
           </button>
           <button
+            onClick={createHandle}
             disabled={text === ""}
             className="cursor-pointer rounded-sm bg-indigo-500 p-3 px-4 text-white disabled:cursor-default disabled:opacity-50"
           >

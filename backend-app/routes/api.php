@@ -25,21 +25,21 @@ Route::middleware(ApiAuthMiddleware::class)->group(function() {
         Route::get('/server/{id}', [ServerController::class, 'show'])->where('id', '.*');
         
         Route::get('/room_server/{server_id}', [RoomServerController::class, 'list'])->where('server_id', '.*');
-        Route::post('/room_server', [RoomServerController::class, 'create']);
         
     });
+    Route::post('/room_server', [RoomServerController::class, 'create']);
     Route::get('/my_server', [MyServerController::class, 'list']);
     Route::get('/friend', [FriendController::class,'list_friend']);
 
     Route::post('/friend/accept/{friend_id}', [FriendController::class, 'accept_request']);
     Route::post('/friend/add/{friend_id}', [FriendController::class, 'add_friend']);
+
+    Route::put('/my_server/{id}', [MyServerController::class, 'join_server'])->where("id", '.*');
 });
 
 
 Route::get('/user_picture/{filename}', [UserController::class, 'user_picture'])->where('filename', '.*');
 Route::get('/server_picture/{filename}', [ServerController::class, 'server_picture'])->where('filename', '.*');
 
-
-Route::get('/test', function (Request $request) {
-    event(new UserCurrent( "019644b6-5eba-7142-9606-09f81e7c1864"));
-});
+Route::get('/find_server/{name}', [ServerController::class, 'find_by_name'])->where('name', '.*');
+Route::get('/find_server', [ServerController::class, 'sort_by_name']);

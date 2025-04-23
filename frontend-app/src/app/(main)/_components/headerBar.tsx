@@ -18,7 +18,7 @@ export default function HeaderBar() {
   }, [pathname]);
 
   return (
-    <header className="bg-foreground absolute flex min-h-[36px] w-full items-center justify-center text-white">
+    <header className="bg-foreground absolute flex min-h-[36px] w-full items-center justify-center text-white select-none">
       {pathname.split("/").pop() == "me" ? (
         <div className="flex items-center gap-2 text-sm">
           <UserIcon className="h-4 w-4" />

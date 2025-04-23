@@ -76,4 +76,34 @@ class ServerController extends Controller
         
         return new ServerResource($server);
     }
+
+    public function find_by_name($name) {
+        $server = Server::where('name', 'like', '%' . $name . '%')->with(['roomServers'])->get();
+        if ($server->isEmpty()) {
+            return response()->json([
+                'errors' => [
+                    'message' => ['Server not found']
+                ]
+            ])->setStatusCode(404);
+        }
+        
+        return [
+            'data' => ServerResource::collection($server),
+        ];
+    }
+
+    public function sort_by_name() {
+        $servers = Server::orderBy('name')->limit(10)->get();
+        if ($servers->isEmpty()) {
+            return response()->json([
+                'errors' => [
+                    'message' => ['No servers found']
+                ]
+            ])->setStatusCode(404);
+        }
+        
+        return [
+            'data' => ServerResource::collection($servers),
+        ];
+    }
 }

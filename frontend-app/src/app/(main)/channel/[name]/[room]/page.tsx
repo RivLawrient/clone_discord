@@ -21,7 +21,7 @@ export default function ChannelRoomPage() {
     );
 
   return (
-    <div className="flex flex-1 flex-col">
+    <div className="flex flex-1 flex-col border-t border-neutral-700">
       <HeaderChat />
       <ListChat />
       <InputChat />

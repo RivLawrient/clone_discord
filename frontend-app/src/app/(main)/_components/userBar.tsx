@@ -25,7 +25,7 @@ export default function UserBar() {
   return (
     <>
       <SettingView setting={setting} />
-      <div className="absolute bottom-0 left-0 z-[51] w-[372px] p-2">
+      <div className="absolute bottom-0 left-0 z-[51] w-[372px] p-2 select-none">
         <div className="flex max-h-[56px] w-full items-center justify-center rounded-sm bg-neutral-800 p-2">
           <div className="bg-foreground flex h-10 w-10 items-center justify-center overflow-hidden rounded-full">
             <img

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ServerResource;
 use App\Models\MyServer;
 use App\Http\Resources\ServerCollection;
 use App\Models\RoomServer;
@@ -12,39 +13,8 @@ use Illuminate\Database\QueryException;
 use Str;
 
 class MyServerController extends Controller
-{
-    // public function create(Request $request): JsonResponse {
-    //     $data = $request->validated();
-
-    //     try {
-    //         $myServer = new MyServer();
-    //         $myServer->id = Str::uuid();
-    //         $myServer->user_id = $request->user()->id;
-    //         $myServer->server_id = $data['server_id'];
-    //         $myServer->save();
-            
-    //         return response()->json([
-    //             'data' => $myServer
-    //         ]);
-    //     } catch (QueryException $e) {
-    //         // Jika terjadi error unique constraint violation
-    //         if ($e->getCode() == 23000) {
-    //             return response()->json([
-    //                 'errors' => [
-    //                     'message' => ['Anda sudah memiliki server ini']
-    //                 ]
-    //             ])->setStatusCode(400);
-    //         }
-    //         throw $e;
-    //     }
-    // }
-
+{ 
     public function list(Request $request) {
-        // $myServers = MyServer::with(['server.roomServers'])
-        // ->get()
-        // ->pluck('server')
-        // ->filter();
-
         $myServers = Server::whereIn(
             'id',
             MyServer::where('user_id', $request->user)->pluck('server_id')
@@ -54,4 +24,17 @@ class MyServerController extends Controller
         
         return new ServerCollection($myServers);
     }
+
+    public function join_server(Request $request, $id) {
+        $server = MyServer::create([
+            'user_id' => $request->user,
+            'server_id' => $id
+        ]);
+        $server->role = "member";
+        $server->save(); 
+
+        return [
+            'data' => new ServerResource(Server::find($id))
+        ];
+    } 
 }
