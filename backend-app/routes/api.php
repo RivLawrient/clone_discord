@@ -1,12 +1,14 @@
 <?php
 
 use App\Events\UserCurrent;
+use App\Http\Controllers\ChannelChatController;
 use App\Http\Controllers\MyServerController;
 use App\Http\Controllers\RoomServerController;
 use App\Http\Controllers\ServerController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\ApiAuthMiddleware;
 use App\Http\Middleware\UpdateWS;
+use App\Models\ChannelChat;
 use Illuminate\Http\Request;
 use App\Http\Controllers\FriendController;
 use Illuminate\Support\Facades\Route;
@@ -31,10 +33,14 @@ Route::middleware(ApiAuthMiddleware::class)->group(function() {
     Route::get('/my_server', [MyServerController::class, 'list']);
     Route::get('/friend', [FriendController::class,'list_friend']);
 
-    Route::post('/friend/accept/{friend_id}', [FriendController::class, 'accept_request']);
-    Route::post('/friend/add/{friend_id}', [FriendController::class, 'add_friend']);
+    Route::post('/friend/accept/{friend_id}', [FriendController::class, 'accept_request'])->where('friend_id', '.*');
+    Route::post('/friend/add/{friend_username}', [FriendController::class, 'add_friend'])->where('friend_username', '.*');
 
     Route::put('/my_server/{id}', [MyServerController::class, 'join_server'])->where("id", '.*');
+
+
+    Route::post('/channel_chat/{room_server_id}', [ChannelChatController::class, 'add'])->where('room_server_id', '.*');
+    Route::get('/channel_chat/{room_server_id}', [ChannelChatController::class, 'get'])->where('room_server_id', '.*');
 });
 
 

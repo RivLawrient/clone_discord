@@ -27,7 +27,7 @@ class UpdateUser implements ShouldBroadcast
     public function broadcastOn(): array
     {
         return [
-'user-data'
+            'user-data'
         ];
     }
 
