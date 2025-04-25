@@ -1,8 +1,15 @@
 "use client";
 
-import { createContext, ReactNode, useContext, useState } from "react";
+import {
+  Dispatch,
+  createContext,
+  ReactNode,
+  useContext,
+  useState,
+} from "react";
+import { Friend } from "./friendContext";
 
-export interface Server {
+export type Server = {
   id: string;
   name: string;
   picture: string;
@@ -14,18 +21,28 @@ export interface Server {
   created_at: string;
   updated_at: string;
   room: RoomServer[];
-}
+};
 
-export interface RoomServer {
+export type RoomServer = {
   id: string;
   name: string;
   created_at: string;
   updated_at: string;
-}
+  chat: Chat[];
+};
+
+export type Chat = {
+  id: string;
+  room_server_id: string;
+  user: Friend;
+  message: string;
+  created_at: string;
+  updated_at: string;
+};
 
 interface ServerContextType {
   servers: Server[];
-  setServers: (servers: Server[]) => void;
+  setServers: Dispatch<React.SetStateAction<Server[]>>;
 }
 
 export const ServerContext = createContext<ServerContextType>({
@@ -41,7 +58,6 @@ export const ServerProvider = ({
   get_servers: Server[];
 }) => {
   const [servers, setServers] = useState<Server[]>(get_servers);
-
   return (
     <ServerContext.Provider value={{ servers, setServers }}>
       {children}

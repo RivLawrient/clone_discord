@@ -1,16 +1,9 @@
 import { useServer } from "@/context/serverContext";
 import { cn } from "@/lib/utils";
-import { ChevronDown, Hash, Plus, Settings, Volume2Icon } from "lucide-react";
+import { ChevronDown, Hash, Plus, Settings } from "lucide-react";
 import { redirect, usePathname } from "next/navigation";
 import { useState } from "react";
 import AddChannelModal from "../add-channel/addChannelModal";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
-import { TooltipArrow } from "@radix-ui/react-tooltip";
 
 export function ListServer() {
   const path = usePathname();
@@ -135,9 +128,9 @@ function ListChannel({
         path.split("/")[3] == id && "bg-neutral-800 text-neutral-200",
       )}
     >
-      <span className="flex items-center gap-1">
-        <Hash className="mr-1 size-5" />
-        {name}
+      <span className="flex min-w-0 flex-1 items-center gap-1">
+        <Hash className="mr-1 size-5 flex-shrink-0" />
+        <span className="truncate">{name}</span>
       </span>
       {(role === "owner" || role === "admin") && (
         <Settings className="hidden h-4 w-4 group-hover:block" />

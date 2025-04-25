@@ -14,7 +14,7 @@ export default function ChannelLayout({
   useEffect(() => {
     const socket = new WebSocket(process.env.WS_API_PUBLIC!);
     socket.onopen = () => {
-      console.log("Connected to server");
+      console.log("Connected to user.");
 
       socket.send(
         JSON.stringify({
@@ -29,7 +29,6 @@ export default function ChannelLayout({
         const data = JSON.parse(event.data);
         if (data.event == "user-current") {
           const res = JSON.parse(data.data);
-          // const users = res;
           console.log(res);
           setFriends({
             friends: res.friends,
@@ -37,8 +36,48 @@ export default function ChannelLayout({
             accept: res.accept,
           });
         }
+
+        if (data.event == "pusher:ping") {
+          socket.send(
+            JSON.stringify({
+              event: "pusher:pong",
+            }),
+          );
+        }
       };
     };
   }, []);
+
+  useEffect(()=>{
+    const socket = new WebSocket(process.env.WS_API_PUBLIC!);
+    socket.onopen = () => {
+      console.log("Connected to server.");
+
+      socket.send(
+        JSON.stringify({
+          event: "pusher:subscribe",
+          data: {
+            channel: "server",
+          },
+        }),
+      );
+
+      socket.onmessage = (event) => {
+        const data = JSON.parse(event.data);
+        // console.log(data);
+        if (data.event == "server-room") {
+          const res = JSON.parse(data.data);
+        }
+
+        if (data.event == "pusher:ping") {
+          socket.send(
+            JSON.stringify({
+              event: "pusher:pong",
+            }),
+          );
+        }
+      };
+    };
+  },[])
   return <>{children}</>;
 }

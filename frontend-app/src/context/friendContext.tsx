@@ -1,20 +1,20 @@
 "use client";
 import { createContext, ReactNode, useContext, useState } from "react";
 
-export interface Friend {
+export type Friend = {
   id: string;
   username: string;
   display_name: string;
   picture: string;
   last_active: number;
   is_online: boolean;
-}
+};
 
-export interface ListFriend {
+export type ListFriend = {
   friends: Friend[];
   accept: Friend[];
   request: Friend[];
-}
+};
 
 interface friendContextType {
   friends: ListFriend;
