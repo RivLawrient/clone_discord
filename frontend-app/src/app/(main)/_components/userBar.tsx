@@ -2,96 +2,153 @@
 import DarkenHexColor from "@/components/DarkenHexColor";
 import { useAuth } from "@/context/authContext";
 import { cn } from "@/lib/utils";
-import { Headphones, Settings } from "lucide-react";
-import { useEffect, useState } from "react";
+import {
+  HeadphoneOffIcon,
+  HeadphonesIcon,
+  LogOutIcon,
+  MicIcon,
+  MicOffIcon,
+} from "lucide-react";
+import { useState } from "react";
+import HoverDetail from "./hoverDetail";
+import { TooltipTrigger } from "@radix-ui/react-tooltip";
 
 export default function UserBar() {
-  const { user, loading } = useAuth();
-  const [setting, setSetting] = useState(false);
-
-  useEffect(() => {
-    const handleEsc = (event: KeyboardEvent) => {
-      if (event.key === "Escape") {
-        setSetting(false);
-      }
-    };
-
-    window.addEventListener("keydown", handleEsc);
-
-    return () => {
-      window.removeEventListener("keydown", handleEsc);
-    };
-  }, []);
-
+  const { user } = useAuth();
   return (
-    <>
-      <SettingView setting={setting} />
-      <div className="absolute bottom-0 left-0 z-[51] w-[372px] p-2 select-none">
-        <div className="flex max-h-[56px] w-full items-center justify-center rounded-sm bg-neutral-800 p-2">
-          <div className="flex-rows flex flex-1 cursor-pointer items-center rounded-md hover:bg-neutral-700">
-            <div
-              style={{
-                backgroundColor: DarkenHexColor("#" + user?.id.slice(-6)),
-              }}
-              className="flex h-10 w-10 items-center justify-center overflow-hidden rounded-full"
-            >
-              <img
-                src={`${user?.picture}`}
-                alt="user picture"
-                className={cn(
-                  "object-cover",
-                  user?.picture.endsWith("default_picture.png") && "p-2",
-                )}
-              />
-            </div>
-            <div className="group flex grow flex-col pl-3 leading-4">
-              <h1 className="text-[14px] font-semibold text-white">
-                {user?.display_name}
-              </h1>
-              <div className="group flex h-[20px] grow flex-col overflow-hidden leading-4">
-                <div className="transition-transform duration-300 group-hover:-translate-y-[20px]">
-                  <p className="flex h-[20px] items-center gap-1 text-[14px] text-neutral-400">
-                    online
-                  </p>
-                  <p className="h-[20px] text-[14px] text-neutral-400">
-                    {user?.username}
-                  </p>
-                </div>
-              </div>
-            </div>
+    <div className="absolute right-2 bottom-0 -left-[72px] z-10 my-2 ml-2 flex w-auto rounded-sm border border-neutral-800 bg-neutral-900 p-2">
+      <div
+        style={{
+          borderStartStartRadius: "24px",
+          borderEndStartRadius: "24px",
+          borderStartEndRadius: "8px",
+          borderEndEndRadius: "8px",
+        }}
+        className="group mr-2 grid flex-1 cursor-pointer grid-cols-[auto_1fr] items-center gap-2 hover:bg-neutral-700/50"
+      >
+        <UserPicture
+          url={process.env.HOST_API_PUBLIC + user.picture}
+          id={user.id}
+          is_online={user.is_online}
+          className=""
+        />
+        <div className="group grid grid-rows-2">
+          <div className="flex h-4 min-w-0 items-end">
+            <span className="truncate text-[14px] leading-none font-semibold">
+              {user.display_name}
+            </span>
           </div>
-          <div className="ml-auto flex h-full items-center justify-center gap-0.5 self-end">
-            <button className="my-0.5 cursor-pointer rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-700">
-              <Headphones className="h-5 w-5" />
-            </button>
-            <button
-              onClick={() => {
-                setSetting(true);
-              }}
-              className="group my-0.5 flex cursor-pointer items-center justify-center rounded-md p-2 text-[14px] text-neutral-400 hover:bg-neutral-700"
-            >
-              <Settings className="h-5 w-5 group-hover:animate-spin" />
-              <div className="absolute -top-6 hidden rounded-md border border-neutral-700 bg-neutral-700 p-1.5 text-[12px] text-nowrap text-white group-hover:block">
-                User Settings
-              </div>
-            </button>
+          <div className="flex h-4 flex-col overflow-hidden text-neutral-400">
+            <div className="flex min-w-0 flex-col transition-transform duration-200 group-hover:-translate-y-4">
+              <span className="truncate text-xs leading-4">Online</span>
+              <span className="truncate text-xs leading-4">
+                {user.username}
+              </span>
+            </div>
           </div>
         </div>
       </div>
-    </>
+
+      <div></div>
+      <div className="flex gap-1">
+        <AttributeBtn variant="mic" />
+        <AttributeBtn variant="speaker" />
+        <AttributeBtn variant="logout" />
+      </div>
+    </div>
   );
 }
 
-function SettingView({ setting }: { setting: boolean }) {
-  if (!setting) return null;
+function AttributeBtn(props: { variant: "mic" | "speaker" | "logout" }) {
+  const [mic, setMic] = useState(false);
+  const [speaker, setSpeaker] = useState(false);
+  const { logout } = useAuth();
+
+  const labelMap = {
+    mic: `Turn ${mic ? "Off" : "On"} Microphone`,
+    speaker: `${speaker ? "Deafen" : "Undeafen"}`,
+    logout: "Log Out",
+  };
+
+  const micHandle = () => {
+    setMic(!mic);
+  };
+
+  const speakerHandle = () => {
+    setSpeaker(!speaker);
+  };
+
+  const logoutHandle = () => {
+    logout();
+  };
   return (
-    <div className="absolute -top-9 z-[99] flex h-[calc(100vh+36px)] w-screen bg-red-200/50">
-      <div className="flex w-7/12 bg-neutral-900">
-        <div className="h-full min-w-[264px]"></div>
-      </div>
-      <div className="flex w-full bg-neutral-800">
-        <div className="h-full min-w-[850px]"></div>
-      </div>
+    <HoverDetail label={labelMap[props.variant]} position="top">
+      <TooltipTrigger
+        onClick={
+          props.variant === "mic"
+            ? micHandle
+            : props.variant === "speaker"
+              ? speakerHandle
+              : logoutHandle
+        }
+        className={cn(
+          "group m-auto flex size-[32px] cursor-pointer items-center justify-center rounded-sm text-neutral-400 transition-all hover:bg-neutral-700/50 hover:text-white",
+          props.variant === "mic" &&
+            !mic &&
+            "bg-red-500/20 hover:bg-red-500/30",
+          props.variant === "speaker" &&
+            !speaker &&
+            "bg-red-500/20 hover:bg-red-500/30",
+        )}
+      >
+        {props.variant === "mic" &&
+          (mic ? (
+            <MicIcon className="size-5" />
+          ) : (
+            <MicOffIcon className="size-5 scale-x-[-1] text-red-500" />
+          ))}
+        {props.variant === "speaker" &&
+          (speaker ? (
+            <HeadphonesIcon className="size-5" />
+          ) : (
+            <HeadphoneOffIcon className="size-5 scale-x-[-1] text-red-500" />
+          ))}
+        {props.variant === "logout" && (
+          <LogOutIcon className="size-5 group-hover:text-red-500" />
+        )}
+      </TooltipTrigger>
+    </HoverDetail>
+  );
+}
+
+function UserPicture(props: {
+  url: string;
+  id: string;
+  is_online: boolean;
+  className?: string;
+}) {
+  return (
+    <div
+      style={{
+        backgroundColor: DarkenHexColor("#" + props.id.slice(-6)),
+      }}
+      className="relative flex size-10 rounded-full"
+    >
+      <div
+        className={cn(
+          "absolute -right-0 -bottom-0 size-3 rounded-full",
+          props.className,
+          !props.is_online ? "bg-green-500" : "bg-gray-500",
+        )}
+      />
+      <img
+        src={props.url}
+        alt=""
+        className={cn(
+          "self-center object-cover",
+          props.url.endsWith("default_picture.png") && "p-2",
+        )}
+      />
     </div>
   );
 }

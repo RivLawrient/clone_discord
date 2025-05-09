@@ -1,9 +1,9 @@
 "use client";
 
 import { useEffect } from "react";
-import InputForm from "../_components/inputForm";
-import SubmitBtnForm from "../_components/submitBtnForm";
 import useLogin, { FormLogin } from "./useLogin";
+import SubmitBtnForm from "../_components/submitBtnForm";
+import InputForm from "../_components/inputForm";
 
 export default function LoginPage() {
   const { error, loading, setLoading, handleSubmit } = useLogin();
@@ -39,7 +39,7 @@ export default function LoginPage() {
           )}
           <InputForm
             label="EMAIL"
-            type="email"
+            type="text"
             error={error.email}
             isRequired={true}
             disabled={loading}
@@ -52,9 +52,9 @@ export default function LoginPage() {
             disabled={loading}
           />
 
-          <a className="mt-1 cursor-not-allowed text-xs font-semibold text-indigo-500">
+          {/* <a className="mt-1 cursor-not-allowed text-xs font-semibold text-indigo-500">
             Forgot your password?
-          </a>
+          </a> */}
 
           <SubmitBtnForm text="Log in" loading={loading} />
 

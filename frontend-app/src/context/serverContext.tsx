@@ -20,15 +20,23 @@ export type Server = {
   member: number;
   created_at: string;
   updated_at: string;
-  room: RoomServer[];
+  channel: Channel[];
+  voice: Voice[];
 };
 
-export type RoomServer = {
+export type Channel = {
   id: string;
   name: string;
   created_at: string;
   updated_at: string;
-  chat: Chat[];
+  chat: [];
+};
+
+export type Voice = {
+  id: string;
+  name: string;
+  created_at: string;
+  updated_at: string;
 };
 
 export type Chat = {

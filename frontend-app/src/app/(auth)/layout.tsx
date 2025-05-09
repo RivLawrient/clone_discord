@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { getUser } from "../(main)/_getData/getUser";
+import { getUser } from "../../get-data/getUser";
 import Image from "next/image";
 
 export default async function AuthLayout({

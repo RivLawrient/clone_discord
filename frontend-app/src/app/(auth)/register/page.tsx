@@ -1,7 +1,11 @@
 "use client";
-import { useEffect } from "react";
 import SubmitBtnForm from "../_components/submitBtnForm";
+import userRegister from "./userRegister";
 import InputForm from "../_components/inputForm";
+import { useEffect } from "react";
+import { Checkbox } from "@/components/ui/checkbox";
+import { Label } from "@/components/ui/label";
+import { cn } from "@/lib/utils";
 import {
   Select,
   SelectContent,
@@ -11,10 +15,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Label } from "@/components/ui/label";
-import { Checkbox } from "@/components/ui/checkbox";
-import userRegister from "./userRegister";
-import { cn } from "@/lib/utils";
 
 export default function RegisterPage() {
   const { error, loading, setLoading, handleSubmit } = userRegister();
@@ -22,6 +22,7 @@ export default function RegisterPage() {
   useEffect(() => {
     setLoading(false);
   }, []);
+
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="bg-accent-foreground animate-in slide-in-from-top-20 flex max-w-[500px] flex-col items-center rounded-lg p-10 text-white duration-700">
@@ -73,6 +74,7 @@ export default function RegisterPage() {
             label="DISPLAY NAME"
             type="text"
             error={error.display_name}
+            isRequired={false}
             disabled={loading}
           />
           <InputForm
@@ -182,11 +184,17 @@ export default function RegisterPage() {
           <SubmitBtnForm text="Register" loading={loading} />
           <h1 className="font-semib old mt-2 text-xs text-gray-400">
             By signing up, you agree to our{" "}
-            <a href="/terms" className="text-indigo-500 hover:underline">
+            <a
+              href="https://discord.com/terms"
+              className="text-indigo-500 hover:underline"
+            >
               Terms of Service
             </a>{" "}
             and{" "}
-            <a href="/privacy" className="text-indigo-500 hover:underline">
+            <a
+              href="https://discord.com/privacy"
+              className="text-indigo-500 hover:underline"
+            >
               Privacy Policy
             </a>
           </h1>

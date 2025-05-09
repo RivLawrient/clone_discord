@@ -3,31 +3,49 @@
 import { redirect } from "next/navigation";
 import { createContext, ReactNode, useContext, useState } from "react";
 
-export interface User {
+export type User = {
   id: string;
   display_name: string;
-  banner_color: string;
   username: string;
   email: string;
   date_of_birth: string;
   status: string;
   about_me: string;
+  picture: string;
+  banner_color: string;
   is_online: boolean;
   last_active: number;
-  picture: string;
   created_at: string;
   updated_at: string;
-}
+};
 
 interface AuthContextType {
-  user: User | null;
+  user: User;
+  setUser: (user: User) => void;
   loading: boolean;
   logout: () => void;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(
-  undefined,
-);
+export const AuthContext = createContext<AuthContextType>({
+  user: {
+    id: "",
+    display_name: "",
+    username: "",
+    email: "",
+    date_of_birth: "",
+    status: "",
+    about_me: "",
+    picture: "",
+    banner_color: "",
+    is_online: false,
+    last_active: 0,
+    created_at: "",
+    updated_at: "",
+  },
+  setUser: () => {},
+  loading: true,
+  logout: () => {},
+});
 
 export const AuthProvider = ({
   children,
@@ -48,7 +66,7 @@ export const AuthProvider = ({
   };
 
   return (
-    <AuthContext.Provider value={{ user, logout, loading }}>
+    <AuthContext.Provider value={{ user, setUser, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

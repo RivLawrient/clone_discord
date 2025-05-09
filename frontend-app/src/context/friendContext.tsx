@@ -12,8 +12,8 @@ export type Friend = {
 
 export type ListFriend = {
   friends: Friend[];
-  accept: Friend[];
   request: Friend[];
+  pending: Friend[];
 };
 
 interface friendContextType {
@@ -25,23 +25,20 @@ export const FriendContext = createContext<friendContextType>({
   friends: {
     friends: [],
     request: [],
-    accept: [],
+    pending: [],
   },
   setFriends: () => {},
 });
 
-export const FriendProvider = ({
-  children,
-  get_friends,
-}: {
+export const FriendProvider = (props: {
   children: ReactNode;
   get_friends: ListFriend;
 }) => {
-  const [friends, setFriends] = useState<ListFriend>(get_friends);
+  const [friends, setFriends] = useState<ListFriend>(props.get_friends);
 
   return (
     <FriendContext.Provider value={{ friends, setFriends }}>
-      {children}
+      {props.children}
     </FriendContext.Provider>
   );
 };

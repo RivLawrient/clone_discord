@@ -5,6 +5,7 @@ import DisableRightClick from "@/components/DisableRightClick";
 export const metadata: Metadata = {
   title: "Clone Discord",
   description: "Welcome to Clone Discord",
+  icons: "dcicon.png",
 };
 
 export default function RootLayout({

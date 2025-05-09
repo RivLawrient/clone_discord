@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     HOST_API_PUBLIC: process.env.HOST_API_PUBLIC,
     WS_API_PUBLIC: process.env.WS_API_PUBLIC,
   },
+  devIndicators: false,
 };
 
 export default nextConfig;
