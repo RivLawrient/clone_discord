@@ -14,5 +14,5 @@ export default function Page() {
 
     return <div>not found</div>;
   }
-  return redirect("/channels/me");
+  redirect("/channels/me");
 }
