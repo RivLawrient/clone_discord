@@ -12,6 +12,7 @@ export default function Layout(props: { children: ReactNode }) {
   const path = usePathname().split("/");
   const router = useRouter();
   useEffect(() => {
+    console.log(servers);
     const socket = new WebSocket(process.env.WS_API_PUBLIC!);
 
     socket.onopen = () => {

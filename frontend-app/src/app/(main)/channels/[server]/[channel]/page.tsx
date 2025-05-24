@@ -25,6 +25,7 @@ export default function Page() {
   }, [servers]);
 
   if (server) {
+    console.log(server + "channel");
     const chat = server.channel.text.find((v) => v.id === path[3]);
     if (chat) {
       return <ChatView />;
