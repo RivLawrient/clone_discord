@@ -33,5 +33,5 @@ export default function Page() {
       return <div>chat not found</div>;
     }
   }
-  redirect("/channels/me");
+  // redirect("/channels/me");
 }
