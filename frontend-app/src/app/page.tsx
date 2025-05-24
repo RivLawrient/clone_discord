@@ -1,5 +1,6 @@
 import { redirect } from "next/navigation";
 
 export default function Page() {
-  return redirect("/channels/me");
+  redirect("/channels/me");
+  return <div></div>;
 }
