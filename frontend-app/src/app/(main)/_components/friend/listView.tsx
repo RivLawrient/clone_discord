@@ -1,8 +1,9 @@
 import { useState } from "react";
 import { SearchBar } from "./searchBar";
 import { FriendList } from "./friendList";
-import { tab } from "../../channel/me/page";
+
 import { Friend } from "@/context/friendContext";
+import { tab } from "../../channels/me/page";
 
 interface listViewProps {
   tab: tab;

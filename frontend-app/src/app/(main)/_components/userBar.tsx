@@ -16,7 +16,7 @@ import { TooltipTrigger } from "@radix-ui/react-tooltip";
 export default function UserBar() {
   const { user } = useAuth();
   return (
-    <div className="absolute right-2 bottom-0 -left-[72px] z-10 my-2 ml-2 flex w-auto rounded-sm border border-neutral-800 bg-neutral-900 p-2">
+    <div className="absolute right-2 bottom-0 -left-[72px] z-10 my-2 ml-2 flex w-auto rounded-sm border border-neutral-700/70 bg-neutral-800 p-2">
       <div
         style={{
           borderStartStartRadius: "24px",
@@ -24,7 +24,7 @@ export default function UserBar() {
           borderStartEndRadius: "8px",
           borderEndEndRadius: "8px",
         }}
-        className="group mr-2 grid flex-1 cursor-pointer grid-cols-[auto_1fr] items-center gap-2 hover:bg-neutral-700/50"
+        className="group mr-2 grid flex-1 cursor-pointer grid-cols-[auto_1fr] items-center gap-2 hover:bg-neutral-700"
       >
         <UserPicture
           url={process.env.HOST_API_PUBLIC + user.picture}
@@ -92,7 +92,7 @@ function AttributeBtn(props: { variant: "mic" | "speaker" | "logout" }) {
               : logoutHandle
         }
         className={cn(
-          "group m-auto flex size-[32px] cursor-pointer items-center justify-center rounded-sm text-neutral-400 transition-all hover:bg-neutral-700/50 hover:text-white",
+          "group m-auto flex size-[32px] cursor-pointer items-center justify-center rounded-sm text-neutral-400 transition-all hover:bg-neutral-700 hover:text-white",
           props.variant === "mic" &&
             !mic &&
             "bg-red-500/20 hover:bg-red-500/30",
@@ -138,7 +138,7 @@ function UserPicture(props: {
         className={cn(
           "absolute -right-0 -bottom-0 size-3 rounded-full",
           props.className,
-          !props.is_online ? "bg-green-500" : "bg-gray-500",
+          props.is_online ? "bg-green-500" : "bg-gray-500",
         )}
       />
       <img

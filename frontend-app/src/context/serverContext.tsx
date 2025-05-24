@@ -7,29 +7,29 @@ import {
   useContext,
   useState,
 } from "react";
-import { Friend } from "./friendContext";
 
 export type Server = {
   id: string;
   name: string;
   picture: string;
-  description: string;
-  is_private: boolean;
-  role: string;
+  is_owner: boolean;
   invite_code: string;
   member: number;
+  members: Users[];
   created_at: string;
   updated_at: string;
-  channel: Channel[];
-  voice: Voice[];
+  channel: {
+    text: Text[];
+    voice: Voice[];
+  };
 };
 
-export type Channel = {
+export type Text = {
   id: string;
   name: string;
   created_at: string;
   updated_at: string;
-  chat: [];
+  chat: Chat[];
 };
 
 export type Voice = {
@@ -41,11 +41,19 @@ export type Voice = {
 
 export type Chat = {
   id: string;
-  room_server_id: string;
-  user: Friend;
+  user: Users;
   message: string;
   created_at: string;
   updated_at: string;
+};
+
+export type Users = {
+  id: string;
+  username: string;
+  display_name: string;
+  picture: string;
+  last_active: number;
+  is_online: boolean;
 };
 
 interface ServerContextType {

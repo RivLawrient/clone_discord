@@ -16,6 +16,6 @@ export default async function getServer(): Promise<Server[] | null> {
       const data = await res.json();
       return data.data;
     }
-    return null;
+    return [];
   });
 }

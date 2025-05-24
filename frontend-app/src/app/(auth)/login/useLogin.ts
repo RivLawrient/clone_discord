@@ -15,15 +15,15 @@ export default function useLogin() {
   const [loading, setLoading] = useState(true);
   const router = useRouter();
 
-  const handleSubmit = async (data: FormLogin) => {
+  const handleSubmit = (data: FormLogin) => {
     setError({
       email: "",
       password: "",
       server: "",
     });
     setLoading(true);
-    
-    await fetch(`${process.env.HOST_API_PUBLIC}/api/login`, {
+
+    fetch(`${process.env.HOST_API_PUBLIC}/api/login`, {
       method: "PUT",
       headers: {
         "Content-Type": "application/json",

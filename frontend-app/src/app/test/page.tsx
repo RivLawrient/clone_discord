@@ -1,23 +1,98 @@
-export default function page() {
+"use client";
+import { cloneElement, ReactNode, useEffect, useRef, useState } from "react";
+import ReactDOM from "react-dom";
+
+export default function Page() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="fixed grid h-screen w-screen grid-rows-[auto_1fr] bg-red-400">
-      <div className="h-[36px] text-center">HEADER</div>
-      <div className="grid min-h-0 grid-cols-[auto_auto_1fr]">
-        <div className="mih-h-0 grid min-h-0 grid-rows-[auto_1fr] bg-red-400 pr-2">
-          <div className="size-12 rounded-full bg-green-500" />
-          <div className="overflow-y-scroll">
-            {Array.from({ length: 51 }).map((_, i) => (
-              <div key={i} className="size-12 rounded-full bg-red-500" />
-            ))}
-          </div>
-        </div>
-        <div className="w-24 rounded-tl-lg bg-green-400">list channel</div>
-        <div className="bg-foreground min-w-0 text-white">
-          <p className="text-wrap break-words">
-            asdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasdfasddsdfsdfsdfsdfsdfsdfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdfsfsfsfsfsfsfsdfsdf
-          </p>
-        </div>
-      </div>
+    <div className="fixed h-screen w-screen bg-neutral-800 p-2 text-white">
+      <button onClick={() => setOpen(!open)}>Open Modal</button>
+      {open && <MyModal onClose={() => setOpen(!open)} />}
+
+      <br />
+      <br />
+      <Tooltip content="Anjai">
+        <div>Akuuu</div>
+      </Tooltip>
     </div>
+  );
+}
+
+function MyModal(props: { onClose: () => void }) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true); // safe to use document
+    return () => setMounted(false); // optional
+  }, []);
+
+  if (!mounted) return null;
+
+  return ReactDOM.createPortal(
+    <div className="absolute size-full bg-red-500/50" onClick={props.onClose}>
+      <div
+        className="fixed top-1/2 left-1/2 size-10 -translate-x-1/2 -translate-y-1/2 bg-white"
+        onClick={(e) => e.stopPropagation()}
+      ></div>
+    </div>,
+    document.body,
+  );
+}
+
+function Tooltip({
+  children,
+  content,
+}: {
+  children: React.ReactElement | ReactNode;
+  content: string;
+}) {
+  const [visible, setVisible] = useState(false);
+  const [coords, setCoords] = useState({ top: 0, left: 0 });
+  const ref = useRef<HTMLSpanElement>(null);
+
+  useEffect(() => {
+    if (visible && ref.current) {
+      const rect = ref.current.getBoundingClientRect();
+      setCoords({
+        top: rect.top - 30, // tooltip di atas
+        left: rect.left + rect.width / 2,
+      });
+    }
+  }, [visible]);
+
+  // const child = cloneElement(children, {
+  //   ref: ref,
+  //   onMouseEnter: (e: React.MouseEvent) => {
+  //     setVisible(true);
+  //   },
+  //   onMouseLeave: (e: React.MouseEvent) => {
+  //     setVisible(false);
+  //   },
+  //   className: "inline-block",
+  // });
+
+  return (
+    <>
+      <span
+        ref={ref}
+        onMouseEnter={() => setVisible(true)}
+        onMouseLeave={() => setVisible(false)}
+        className="inline-block"
+      >
+        {children}
+      </span>
+      {/* {child} */}
+      {visible &&
+        ReactDOM.createPortal(
+          <div
+            className="fixed z-[9999] -translate-x-1/2 rounded bg-black px-2 py-1 text-xs text-white"
+            style={{ top: coords.top, left: coords.left }}
+          >
+            {content}
+          </div>,
+          document.body,
+        )}
+    </>
   );
 }

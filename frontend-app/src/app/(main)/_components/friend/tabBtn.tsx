@@ -1,6 +1,7 @@
 import { useFriend } from "@/context/friendContext";
-import { tab } from "../../channel/me/page";
 import { cn } from "@/lib/utils";
+import { tab } from "../../channels/me/page";
+
 
 interface tabBtnProps {
   tab: tab;

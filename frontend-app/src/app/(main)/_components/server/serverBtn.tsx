@@ -1,7 +1,7 @@
 "use client";
 import { cn } from "@/lib/utils";
 import HoverDetail from "../hoverDetail";
-import { PlusCircleIcon } from "lucide-react";
+import { CameraIcon, PlusCircleIcon, PlusIcon } from "lucide-react";
 import { Server } from "@/context/serverContext";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
 import { redirect, usePathname } from "next/navigation";
@@ -15,6 +15,9 @@ import {
   DialogTitle,
   DialogTrigger,
 } from "@radix-ui/react-dialog";
+import ModalCreateServer from "./modalCreateServer";
+import { useState } from "react";
+import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 
 interface Props {
   logo: "dm" | "add" | "server";
@@ -23,6 +26,7 @@ interface Props {
 
 export default function ServerBtn(props: Props) {
   const path = usePathname().split("/");
+  const [modal, setModal] = useState(false);
 
   return (
     <div className="relative flex h-10 w-full justify-center">
@@ -38,7 +42,7 @@ export default function ServerBtn(props: Props) {
         }
         position="right"
       >
-        <Dialog>
+        <Dialog onOpenChange={(v) => setModal(v)} open={modal}>
           <DialogTrigger asChild>
             <TooltipTrigger
               onClick={() =>
@@ -48,14 +52,16 @@ export default function ServerBtn(props: Props) {
                     (props.logo === "dm"
                       ? "me"
                       : props.logo === "server"
-                        ? props.server
-                          ? props.server.id + "/" + props.server.channel[0].id
-                          : ""
+                        ? props.server && props.server.channel.text[0]
+                          ? props.server.id +
+                            "/" +
+                            props.server.channel.text[0].id
+                          : props.server?.id
                         : ""),
                 )
               }
               className={cn(
-                "group peer size-10 cursor-pointer rounded-lg bg-neutral-800 hover:bg-indigo-500",
+                "group peer size-10 cursor-pointer overflow-hidden rounded-lg bg-neutral-800 hover:bg-indigo-500",
                 path[2] === "me" && props.logo === "dm"
                   ? "bg-indigo-500"
                   : props.server &&
@@ -68,11 +74,21 @@ export default function ServerBtn(props: Props) {
               ) : props.logo === "add" ? (
                 <PlusCircleIcon className="m-auto fill-white stroke-neutral-800 group-hover:stroke-indigo-500" />
               ) : props.server ? (
-                <h1>{props.server.name[0]}</h1>
+                props.server.picture ? (
+                  <img
+                    src={process.env.HOST_API_PUBLIC + props.server.picture}
+                    alt=""
+                    className="size-full object-cover"
+                  />
+                ) : (
+                  <h1>{props.server.name[0].toUpperCase()}</h1>
+                )
               ) : null}
             </TooltipTrigger>
           </DialogTrigger>
-          {props.logo === "add" && <ModalAddServer />}
+          {props.logo === "add" && (
+            <ModalCreateServer modal={modal} setModal={setModal} />
+          )}
         </Dialog>
       </HoverDetail>
       <div
@@ -86,19 +102,5 @@ export default function ServerBtn(props: Props) {
         )}
       />
     </div>
-  );
-}
-
-function ModalAddServer() {
-  return (
-    <DialogPortal>
-      <DialogOverlay className="fixed inset-0 bg-black/50"></DialogOverlay>
-      <DialogContent className="fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-red-500">
-        <DialogTitle>Add Server</DialogTitle>
-        <DialogDescription></DialogDescription>
-        <DialogClose>X</DialogClose>
-        <div className="text-white">asdf</div>
-      </DialogContent>
-    </DialogPortal>
   );
 }

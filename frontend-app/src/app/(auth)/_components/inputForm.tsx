@@ -27,7 +27,7 @@ export default function inputForm(props: Props) {
         maxLength={100}
         disabled={props.disabled}
         className={cn(
-          "rounded-lg border border-gray-800 bg-transparent p-2 transition-all focus:border-blue-500 focus:outline-none",
+          "rounded-lg border border-gray-800 bg-transparent p-2 transition-all focus:border-blue-500 focus:outline-none [&::-webkit-input-autofill-selected-color]:bg-transparent",
           props.error && "border-red-500",
         )}
       />

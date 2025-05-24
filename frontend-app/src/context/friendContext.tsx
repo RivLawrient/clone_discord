@@ -1,5 +1,12 @@
 "use client";
 import { createContext, ReactNode, useContext, useState } from "react";
+import { Users } from "./serverContext";
+
+export type ListFriend = {
+  friends: Friend[];
+  request: Friend[];
+  pending: Friend[];
+};
 
 export type Friend = {
   id: string;
@@ -8,12 +15,6 @@ export type Friend = {
   picture: string;
   last_active: number;
   is_online: boolean;
-};
-
-export type ListFriend = {
-  friends: Friend[];
-  request: Friend[];
-  pending: Friend[];
 };
 
 interface friendContextType {

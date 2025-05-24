@@ -8,7 +8,7 @@ import UserBar from "./userBar";
 export default function InnerSideBar() {
   const path = usePathname().split("/");
   return (
-    <div className="relative grid w-[300px] grid-rows-[auto_1fr] rounded-tl-lg border-t border-l border-neutral-800">
+    <div className="relative grid min-h-0 w-[300px] grid-rows-[auto_1fr] rounded-tl-lg border-t border-l border-neutral-700/70">
       {path[2] === "me" ? <InnerSideBarFriend /> : <InnerSideBarChannel />}
       <UserBar />
     </div>

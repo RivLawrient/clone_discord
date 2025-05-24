@@ -11,7 +11,7 @@ import {
   Trash2Icon,
   X,
 } from "lucide-react";
-import HoverDetail from "../hoverDetail";
+// import HoverDetail from "../../../xxx(main)/_components/hoverDetail";
 import { useState } from "react";
 import { redirect } from "next/navigation";
 
@@ -150,45 +150,45 @@ export function FriendList(props: Props) {
         {props.isPending || props.isRequest ? (
           <div className="flex gap-6">
             {props.isRequest && (
-              <HoverDetail position="top" label="Accept">
-                <button
-                  onClick={acceptHandle}
-                  className="group/acc hover:bg-foreground cursor-pointer rounded-full"
-                >
-                  <Check className="size-10 stroke-neutral-500 p-2 group-hover/acc:stroke-green-500" />
-                </button>
-              </HoverDetail>
+              // <HoverDetail position="top" label="Accept">
+              <button
+                onClick={acceptHandle}
+                className="group/acc hover:bg-foreground cursor-pointer rounded-full"
+              >
+                <Check className="size-10 stroke-neutral-500 p-2 group-hover/acc:stroke-green-500" />
+              </button>
+              // </HoverDetail>
             )}
-            <HoverDetail
+            {/* <HoverDetail
               position="top"
               label={props.isPending ? "Cancel" : "Reject"}
+            > */}
+            <button
+              onClick={props.isPending ? cancelHandle : declineHandle}
+              className="group/dec hover:bg-foreground cursor-pointer rounded-full"
             >
-              <button
-                onClick={props.isPending ? cancelHandle : declineHandle}
-                className="group/dec hover:bg-foreground cursor-pointer rounded-full"
-              >
-                <X className="size-10 stroke-neutral-500 p-2 group-hover/dec:stroke-red-500" />
-              </button>
-            </HoverDetail>
+              <X className="size-10 stroke-neutral-500 p-2 group-hover/dec:stroke-red-500" />
+            </button>
+            {/* </HoverDetail> */}
           </div>
         ) : (
           <div className="flex gap-2">
-            <HoverDetail label="Message" position="top">
-              <button
-                onClick={() => redirect("/channel/me/" + props.friend.username)}
-                className="group/opt cursor-pointer rounded-full p-2 group-hover:bg-neutral-900"
-              >
-                <MessageCircleIcon className="size-5 fill-neutral-500 stroke-neutral-500 group-hover/opt:fill-white group-hover/opt:stroke-white" />
-              </button>
-            </HoverDetail>
-            <HoverDetail label="Remove Friends" position="top">
-              <button
-                onClick={() => setModal(!modal)}
-                className="group/opt cursor-pointer rounded-full p-2 group-hover:bg-neutral-900"
-              >
-                <Trash2Icon className="size-5 stroke-neutral-500 group-hover/opt:stroke-red-500" />
-              </button>
-            </HoverDetail>
+            {/* <HoverDetail label="Message" position="top"> */}
+            <button
+              onClick={() => redirect("/channel/me/" + props.friend.username)}
+              className="group/opt cursor-pointer rounded-full p-2 group-hover:bg-neutral-900"
+            >
+              <MessageCircleIcon className="size-5 fill-neutral-500 stroke-neutral-500 group-hover/opt:fill-white group-hover/opt:stroke-white" />
+            </button>
+            {/* </HoverDetail> */}
+            {/* <HoverDetail label="Remove Friends" position="top"> */}
+            <button
+              onClick={() => setModal(!modal)}
+              className="group/opt cursor-pointer rounded-full p-2 group-hover:bg-neutral-900"
+            >
+              <Trash2Icon className="size-5 stroke-neutral-500 group-hover/opt:stroke-red-500" />
+            </button>
+            {/* </HoverDetail> */}
           </div>
         )}
       </div>
