@@ -11,6 +11,7 @@ export default function Page() {
   const server = servers.find((v) => v.id === path[2]);
 
   useEffect(() => {
+    console.log(server + "channel");
     if (
       !servers
         .filter((v) => v.id === path[2])[0]

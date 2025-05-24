@@ -57,8 +57,9 @@ export default function Layout(props: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
+    console.log(servers);
     if (!servers.find((v) => v.id === path[2])) {
-      redirect("/channels/me");
+      // redirect("/channels/me");
     }
   }, [servers]);
   return (
