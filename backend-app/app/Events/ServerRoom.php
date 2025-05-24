@@ -2,6 +2,8 @@
 
 namespace App\Events;
 
+use App\Http\Resources\ServerResource;
+use App\Models\Server;
 use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
@@ -14,16 +16,20 @@ class ServerRoom implements ShouldBroadcast
 
     private $server_id;
 
-    public $chat;
+    public $data;
     /**
      * Create a new event instance.
      */
-    public function __construct($server_id, $chat)
+    public function __construct($server_id)
     {
         $this->server_id = $server_id;
 
-        $this->chat = $chat;
-        //
+        $server = Server::find($server_id);
+        if(!$server) {
+            $this->data = null;
+        }else{
+            $this->data = new ServerResource($server);
+        }
     }
 
     /**

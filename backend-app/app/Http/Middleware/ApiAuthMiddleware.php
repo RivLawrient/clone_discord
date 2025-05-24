@@ -22,7 +22,11 @@ class ApiAuthMiddleware
         $user = null;
 
         if($token) {
-            $user = User::select('id', 'token_exp')->where('token', $token)->first();
+            $user = User
+            ::select('id', 'token_exp')
+            ->where('token', $token)
+            ->first();
+            
             if ($user) {
                 if ($user->token_exp > time()) {
                     User::where('id', $user->id)->update(['last_active' => time(), 'is_online' => true]);
@@ -35,14 +39,13 @@ class ApiAuthMiddleware
             $request->merge(['user' => $user->id]);
             return $next($request);
         } else {
-            User
-            ::where('token', $token)
+            User::where('token', $token)
             ->update(['token' => null, 'token_exp' => null]);
-            return response()->json([
+
+            return response()
+            ->json([
                 "errors" => [
-                    "message" => [
-                        "unauthorized"
-                    ]
+                    "unauthorized"
                 ]
             ])
             ->setStatusCode(401)

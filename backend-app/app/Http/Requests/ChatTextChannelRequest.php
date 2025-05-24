@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Contracts\Validation\Validator;
 use Illuminate\Foundation\Http\FormRequest;
+use Illuminate\Http\Exceptions\HttpResponseException;
 
-class ChannelChatCreateRequest extends FormRequest
+class ChatTextChannelRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -19,15 +21,15 @@ class ChannelChatCreateRequest extends FormRequest
      *
      * @return array<string, \Illuminate\Contracts\Validation\ValidationRule|array<mixed>|string>
      */
-    public function rules(): array
+     public function rules(): array
     {
         return [
-            'message' => 'required|string|max:255',
+            'message' => 'required|string',
         ];
     }
 
-    protected function failedValidation(\Illuminate\Contracts\Validation\Validator $validator) {
-        throw new \Illuminate\Http\Exceptions\HttpResponseException(response()->json([
+    protected function failedValidation(Validator $validator) {
+        throw new HttpResponseException(response()->json([
             'errors' => $validator->getMessageBag()
         ], 400));
     }

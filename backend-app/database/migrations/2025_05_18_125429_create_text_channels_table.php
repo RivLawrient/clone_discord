@@ -11,21 +11,22 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('room_servers', function (Blueprint $table) {
-            $table->string('id')->primary();
-            $table->string('name');
-            $table->string('server_id');
+        Schema::create('text_channels', function (Blueprint $table) {
+            $table->uuid("id")->primary();
+            $table->uuid("server_id");
+            $table->string("name", 100)->nullable(false)->default("general");
             $table->timestamps();
 
-            $table->foreign('server_id')->references('id')->on('servers');
+            $table->foreign("server_id")->references("id")->on("servers");
         });
     }
+
 
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('room_servers');
+        Schema::dropIfExists('text_channels');
     }
 };

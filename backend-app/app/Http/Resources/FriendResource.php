@@ -5,7 +5,7 @@ namespace App\Http\Resources;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
-class ChannelChatResource extends JsonResource
+class FriendResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
@@ -16,11 +16,11 @@ class ChannelChatResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'room_server_id' => $this->room_server_id,
-            'user' => new FriendListResource($this->user),
-            'message' => $this->message,
-            'created_at' => $this->created_at,
-            'updated_at' => $this->updated_at,
+            'username' => $this->username,
+            'display_name' => $this->display_name,
+            'picture' => $this->picture,
+            'last_active' => $this->last_active,
+            'is_online' => $this->is_online
         ];
     }
 }

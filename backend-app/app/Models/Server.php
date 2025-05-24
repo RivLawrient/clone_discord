@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
+use Str;
 
 class Server extends Model
 {
@@ -18,35 +18,27 @@ class Server extends Model
     protected $fillable = [
         'name',
         'picture',
-        'description',
     ];
-    
-    /**
-     * Relasi ke model MyServer
-     *
-     * @return HasMany
-     */
-    public function myServers(): HasMany
+
+    function generateUniqueInviteCode($length = 8): string
     {
-        return $this->hasMany(MyServer::class, 'server_id', 'id');
-    }
-    
-    /**
-     * Mendapatkan semua user yang memiliki server ini
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasManyThrough
-     */
-    public function users()
-    {
-        return $this->hasManyThrough(User::class, MyServer::class, 'server_id', 'id', 'id', 'user_id');
+        do {
+            $code = Str::upper(Str::random($length)); // Contoh: "X8Y4ZT2A"
+        } while (Server::where('invite_code', $code)->exists());
+
+        return $code;
     }
 
-    /**
-     * Relasi ke model RoomServer
-     *
-     * @return HasMany
-     */
-    public function roomServers(): HasMany {
-        return $this->hasMany(RoomServer::class, "server_id", "id");
+    public function myserver() {
+        return $this->hasMany(MyServer::class);
+    }
+
+    public function textchannel() {
+        return $this->hasMany(TextChannel::class);
+    }
+
+    public function voicechannel() {
+        return $this->hasMany(VoiceChannel::class);
     }
 }
+

@@ -15,13 +15,12 @@ return new class extends Migration
             $table->string('id')->primary();
             $table->string('user_id');
             $table->string('server_id');
-            $table->string('role')->default('member'); // owner, admin, member
+            $table->boolean("is_owner")->default(false);
             $table->timestamps();
 
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('server_id')->references('id')->on('servers');
             
-            // Menambahkan constraint composite unique untuk user_id dan server_id
             $table->unique(['user_id', 'server_id']);
         });
     }

@@ -2,49 +2,49 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\UpdateUser;
 use App\Events\UserCurrent;
+use App\Events\UserFriend;
+use App\Http\Resources\FriendResource;
 use App\Models\Friend;
 use App\Models\User;
 use App\Http\Resources\FriendListResource;
 use Illuminate\Http\Request;
+use Symfony\Component\String\Inflector\FrenchInflector;
+use function Laravel\Prompts\select;
+use function PHPUnit\Framework\returnArgument;
 
 class FriendController extends Controller
 {
-    public function add_friend(Request $request, $friend_username) {
-        $check = User
-        ::where('username', $friend_username)
-        ->first();
-        if (!$check) {
+    public function add_friend(Request $request, $username) {
+        $check_user = User::where("username", $username)->first();
+        if (!$check_user) {
             return response()->json([
                 'message' => 'Hm, didn’t work. Double check that the username is correct.'
             ], 404);
         }else{
-            if ($request->user == $check->id) {
+            if ($request->user == $check_user->id) {
                 return response()->json([
                     'message' => 'Hm, didn’t work. Double check that the username is correct.'
                 ], 400);
             }
         }
 
-        
-        $friend = Friend
-        ::where('user_id', $request->user)
-        ->where('friend_id', $check['id'])
-        ->select('id')
+        $user_id = Friend
+        ::where("user_id", $request->user)
+        ->where("friend_id", $check_user->id)
         ->first();
-        if ($friend) {
+        if ($user_id) {
             return response()->json([
                 'message' => 'User already in your list'
             ], 400);
         }
+        
 
-        $me = Friend
-        ::where('user_id', $check['id'])
+        $friend_id = Friend
+        ::where('user_id', $check_user->id)
         ->where('friend_id', $request->user)
-        ->select('id')
         ->first();
-        if ($me) {
+        if ($friend_id) {
             return response()->json([
                 'message' => 'User already in your list'
             ], 400);
@@ -52,87 +52,206 @@ class FriendController extends Controller
 
         Friend::create([
             'user_id' => $request->user,
-            'friend_id' => $check->id,
+            'friend_id' => $check_user->id,
             'is_accepted' => false
         ]);
 
-        // event(new UpdateUser([
-        //     'accept' => new FriendListResource(User::where('id', $request->user)->first()),
-        //     'user_id' => $check->id
-        // ]));
-        event(new UserCurrent( $check->id));
-        event(new UserCurrent( $request->user));
 
-        return response()->json([
-            'request' => new FriendListResource($check)
+        broadcast(new UserFriend($check_user->id));
+
+        return response()
+        ->json([
+            "data" => new FriendResource($check_user)
         ], 200);
+
     }
 
     public function list_friend(Request $request) {
-        $list = Friend
+        $me = Friend
+        ::where("friend_id", $request->user)
+        ->where("is_accepted", true)
+        ->with("user")
+        ->get()
+        ->pluck('user');
+
+        $friend = Friend
         ::where('user_id', $request->user)
         ->where('is_accepted', true)
-        ->join('users', 'friends.friend_id', '=', 'users.id')
-        ->get();
+        ->with('friend')
+        ->get()
+        ->pluck('friend');
 
-        $accept = Friend
+        $req = Friend
         ::where('friend_id', $request->user)
         ->where('is_accepted', false)
-        ->join('users', 'friends.user_id', '=', 'users.id')
-        ->get();
+        ->with("user")
+        ->get()
+        ->pluck('user');
 
-        $request = Friend
+        $pending = Friend
         ::where('user_id', $request->user)
         ->where('is_accepted', false)
-        ->join('users', 'friends.friend_id', '=', 'users.id')
-        ->get();
-
+        ->with('friend')
+        ->get()
+        ->pluck('friend');
         
         return response()->json([
             'data' => [
-                'friends' => FriendListResource::collection($list),
-                'accept' => FriendListResource::collection($accept),
-                'request' => FriendListResource::collection($request)
+                'friends' => FriendResource::collection($me->merge($friend)),
+                'request' => FriendResource::collection($req),
+                'pending' => FriendResource::collection($pending)
 
             ]
         ], 200);
     }
  
 
-    public function accept_request(Request $request, $friend_id) {
+    public function accept_request(Request $request, $username) {
+        $friend = User::where("username", $username)->first();
+        if(!$friend) {
+            return response()->json([
+                'message' => 'friend request not found'
+            ], 404);
+        }
         $req = Friend
-        ::where('user_id', $friend_id)
+        ::where('user_id', $friend->id)
         ->where('friend_id', $request->user)
         ->where('is_accepted', false)
         ->first();
         if (!$req) {
             return response()->json([
-                'message' => 'Friend request not found'
+                'message' => 'friend request not found'
             ], 404);
         }
         $req->is_accepted = true;
         $req->save();
 
-       Friend
-       ::create([
-            'user_id' => $request->user,
-            'friend_id' => $friend_id,
-            'is_accepted' => true
-        ]);
-
-        // event(new UpdateUser([
-        //     'friends' => new FriendListResource(User::where('id', $request->user)->first()),
-        //     'user_id' => $friend_id
-        // ]));
-
-        event(new UserCurrent( $friend_id));
-        event(new UserCurrent( $request->user));
+        
+        broadcast(new UserFriend($friend->id));
 
         return response()->json([
-            'data' => new FriendListResource(User::find($friend_id))
+            'data' => new FriendResource($friend)
         ], 200);
     }
 
-//    todo: yang request hilangkan di pending dan add ke friend list 
-// websocket nya friendnya 'request->user' dan target accountny 'friend_id'
+    public function decline_request(Request $request, $username){
+        $friend = User::where("username", $username)->first();
+        if (!$friend) {
+            return response()->json([
+                'message' => 'friend request not found'
+            ], 404);
+        }
+        $req = Friend
+        ::where("user_id", $friend->id)
+        ->where("friend_id", $request->user)
+        ->where("is_accepted", false)
+        ->first();
+        if (!$req) {
+            return response()->json([
+                'message' => 'friend request not found'
+            ], 404);
+        }
+        $req->delete();
+
+        broadcast(new UserFriend($friend->id));
+
+        return response()->json([
+            'data' => new FriendResource($friend)
+        ], 200);
+    }
+
+    public function cancel_request(Request $request, $username) {
+        $friend = User::where("username", $username)->first();
+        if (!$friend) {
+            return response()->json([
+                'message' => 'friend request not found'
+            ], 404);
+        }
+        $req = Friend
+        ::where("user_id", $request->user)
+        ->where("friend_id", $friend->id)
+        ->where("is_accepted", false)
+        ->first();
+        if (!$req) {
+            return response()->json([
+                'message' => 'pending add friend not found'
+            ], 404);
+        }
+        $req->delete();
+
+        broadcast(new UserFriend($friend->id));
+
+        return response()->json([
+            'data' => new FriendResource($friend)
+        ], 200);
+
+    }
+
+    public function broadcast_friend(string $id) {
+        $me = Friend
+        ::where("friend_id", $id)
+        ->where("is_accepted", true)
+        ->with("user")
+        ->get()
+        ->pluck('user.id');
+
+        $friend = Friend
+        ::where('user_id', $id)
+        ->where('is_accepted', true)
+        ->with('friend')
+        ->get()
+        ->pluck('friend.id');
+
+        $data = $me->merge($friend);
+
+        foreach ($data as $fr) {
+            event(new UserFriend($fr));
+        }
+    }
+
+    public function remove(Request $request, $username) {
+        $friend = User::where("username", $username)->first();
+        $data = Friend
+        ::where("friend_id", $friend->id)
+        ->where("user_id", $request->user)
+        ->first();
+
+        if(!$data) {
+            $data = Friend
+            ::where("user_id", $friend->id)
+            ->where("friend_id", $request->user)
+            ->first();
+
+            if(!$data){
+                return response()->json([
+                    'message' => 'friend not found'
+                ], 404);
+            }
+        }
+
+        $data->delete();
+
+        broadcast(new UserFriend($friend->id));
+
+        return response()
+        ->json([
+            "data" => new FriendResource($friend)
+        ])
+        ->setStatusCode(200);
+    }
+
+    public function show(Request $request, $username) {
+        $friend = User::where("username", $username)->first();
+        if (!$friend || ($friend->id === $request->user)) {
+            return response()->json([
+                'message' => 'user is not found'
+            ], 404);
+        }
+
+        return response()
+        ->json([
+            "data" => new FriendResource($friend)
+        ])
+        ->setStatusCode(200);
+    }
 }

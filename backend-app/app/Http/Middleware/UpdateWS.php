@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use App\Events\UserCurrent;
+use App\Events\UserFriend;
 use App\Models\User;
 use Closure;
 use Illuminate\Http\Request;
@@ -17,15 +18,15 @@ class UpdateWS
      */
     public function handle(Request $request, Closure $next): Response
     {
-        $other = User::select('id', 'username', 'display_name', 'picture', 'last_active', 'is_online')->get();
+        $other = User::get();
         foreach ($other as $o) {
-            if ($o->last_active < time() - 10 && $o->is_online) {
+            if ($o->last_active < time() - 30 && $o->is_online) {
                 User::where('id', $o->id)->update(['is_online' => false]);
             }
             if($o->id == $request->user) {
                 continue;
             }
-            event(new UserCurrent($o->id));
+            event(new UserFriend($o->id));
         }
 
         return $next($request);

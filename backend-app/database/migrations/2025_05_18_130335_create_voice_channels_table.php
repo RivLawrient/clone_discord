@@ -11,12 +11,13 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('servers', function (Blueprint $table) {
-            $table->uuid('id')->primary();
-            $table->string('name', 30)->nullable(false);
-            $table->string('picture', 100)->nullable();
-            $table->string('invite_code', 100)->nullable()->unique();
+        Schema::create('voice_channels', function (Blueprint $table) {
+            $table->uuid("id")->primary();
+            $table->uuid("server_id");
+            $table->string("name", 100)->nullable(false)->default("General");
             $table->timestamps();
+
+            $table->foreign("server_id")->on("servers")->references("id");
         });
     }
 
@@ -25,6 +26,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('servers');
+        Schema::dropIfExists('voice_channels');
     }
 };

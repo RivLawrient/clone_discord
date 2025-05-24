@@ -2,25 +2,21 @@
 
 namespace App\Events;
 
-use App\Http\Resources\FriendListResource;
-use App\Models\Friend;
-use App\Models\User;
-use Illuminate\Broadcasting\Channel;
-use Illuminate\Broadcasting\InteractsWithSockets;
-use Illuminate\Broadcasting\PresenceChannel;
-use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
+use Illuminate\Broadcasting\InteractsWithSockets;
 use Illuminate\Foundation\Events\Dispatchable;
+use App\Http\Resources\FriendResource;
 use Illuminate\Queue\SerializesModels;
+use App\Models\Friend;
 
-class UserCurrent implements ShouldBroadcast
+class UserFriend implements ShouldBroadcast
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
     public $friends;
-    public $accept;
-
     public $request; 
+    public $pending;
+
 
     private $user_id;
     /**
@@ -30,27 +26,37 @@ class UserCurrent implements ShouldBroadcast
     {
 
         $this->user_id = $user_id;
+
+        $m = Friend
+        ::where("friend_id", $user_id)
+        ->where("is_accepted", true)
+        ->with("user")
+        ->get()
+        ->pluck('user');
         $f = Friend
         ::where('user_id', $user_id)
         ->where('is_accepted', true)
-        ->join('users', 'friends.friend_id', '=', 'users.id')
-        ->get();
-
-        $a = Friend
-        ::where('friend_id', $user_id)
-        ->where('is_accepted', false)
-        ->join('users', 'friends.user_id', '=', 'users.id')
-        ->get();
+        ->with('friend')
+        ->get()
+        ->pluck('friend');
 
         $r = Friend
+        ::where('friend_id', $user_id)
+        ->where('is_accepted', false)
+        ->with("user")
+        ->get()
+        ->pluck('user');
+
+        $p = Friend
         ::where('user_id', $user_id)
         ->where('is_accepted', false)
-        ->join('users', 'friends.friend_id', '=', 'users.id')
-        ->get();
+        ->with('friend')
+        ->get()
+        ->pluck('friend');
 
-        $this->friends = FriendListResource::collection($f);
-        $this->accept = FriendListResource::collection($a);
-        $this->request = FriendListResource::collection($r);
+        $this->friends = FriendResource::collection($m->merge($f));
+        $this->request = FriendResource::collection($r);
+        $this->pending = FriendResource::collection($p);
     }
 
     /**

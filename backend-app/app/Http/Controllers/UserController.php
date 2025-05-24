@@ -2,16 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Events\UpdateUser;
-use App\Http\Requests\UserLoginRequest;
 use App\Http\Requests\UserRegisterRequest;
-use App\Http\Resources\FriendListResource;
-use App\Http\Resources\UserCollection;
+use App\Http\Requests\UserLoginRequest;
+use Illuminate\Support\Facades\Hash;
 use App\Http\Resources\UserResource;
-use App\Models\User;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Hash;
+use App\Models\User;
 use Str;
 
 class UserController extends Controller
@@ -21,6 +18,8 @@ class UserController extends Controller
         $data['password'] = Hash::make($data['password']);
 
         $user = User::create($data);
+        $user->status = "";
+        $user->about_me = "";
         $user->token = Str::uuid();
         $user->token_exp = time() + (60 * 60) * 24; 
         $user->picture = '/api/user_picture/default_picture.png';
@@ -40,11 +39,13 @@ class UserController extends Controller
 
         $user = User::where('email', $data['email'])->first();
         if(!$user || !Hash::check($data['password'], $user->password)) {
-            return response()->json([
+            return response()
+            ->json([
                 'errors' => [
                     'message' => ['Email or Password is incorrect']
                 ]
-            ])->setStatusCode(401);
+            ])
+            ->setStatusCode(401);
         }
         
         $user->token = Str::uuid();
@@ -60,21 +61,6 @@ class UserController extends Controller
         ->setStatusCode(200);
     }
 
-    public function logout(Request $request): JsonResponse {
-        return response()
-        ->json([
-            'message' => 'Logged out successfully'
-        ])
-        ->setStatusCode(200)
-        ->withCookie(cookie('session', '', 0));
-    }
-
-    public function user(Request $request): UserResource {
-        $user = User::where('token', $request->cookie('session'))->first();
-        $user->picture = request()->getSchemeAndHttpHost() . $user->picture;
-        return new UserResource($user);
-    }
-
     public function user_picture($filename) {
         $path = storage_path('app/public/' . $filename);
         if (!file_exists($path)) {
@@ -88,11 +74,61 @@ class UserController extends Controller
         return response()->file($path);
     }
 
-    public function list_user() {
-        $user = User::all();
 
-
-        return new UserCollection($user);
+    public function user(Request $request): UserResource {
+        $user = User::where('token', $request->cookie('session'))->first();
+        return new UserResource($user);
     }
 
+
+    public function logout(Request $request): JsonResponse {
+        return response()
+        ->json([
+            'message' => 'Logged out successfully'
+        ])
+        ->setStatusCode(200)
+        ->withCookie(cookie('session', '', 0));
+    }
+
+    public function update_online(Request $request) {
+        $update = User
+        ::where("id", $request->user)
+        ->first();
+        if(!$update) {
+            return response()->setStatusCode(400);
+        }
+
+        $update->last_active = time();
+        $update->is_online = true;
+        $update->save();
+
+        new FriendController()->broadcast_friend($request->user);
+        
+        return response()
+        ->json([
+            "data" => new UserResource($update->fresh())
+        ])
+        ->setStatusCode(200);
+    }
+
+    public function update_offline(Request $request) {
+        $update = User
+        ::where("id", $request->user)
+        ->first();
+        if(!$update) {
+            return response()->setStatusCode(400);
+        }
+
+        $update->last_active = time();
+        $update->is_online = false;
+        $update->save();
+
+        new FriendController()->broadcast_friend($request->user);
+
+        return response()
+        ->json([
+            "data" => new UserResource($update->fresh())
+        ])
+        ->setStatusCode(200);
+    }
 }
