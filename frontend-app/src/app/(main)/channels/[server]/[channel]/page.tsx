@@ -10,19 +10,19 @@ export default function Page() {
   const { servers } = useServer();
   const server = servers.find((v) => v.id === path[2]);
 
-  useEffect(() => {
-    console.log(server + "channel");
-    if (
-      !servers
-        .filter((v) => v.id === path[2])[0]
-        .channel.text.find((v) => v.id === path[3]) &&
-      !servers
-        .filter((v) => v.id === path[2])[0]
-        .channel.voice.find((v) => v.id === path[3])
-    ) {
-      redirect("/channels/" + path[2]);
-    }
-  }, [servers]);
+  // useEffect(() => {
+  //   console.log(server + "channel");
+  //   if (
+  //     !servers
+  //       .filter((v) => v.id === path[2])[0]
+  //       .channel.text.find((v) => v.id === path[3]) &&
+  //     !servers
+  //       .filter((v) => v.id === path[2])[0]
+  //       .channel.voice.find((v) => v.id === path[3])
+  //   ) {
+  //     redirect("/channels/" + path[2]);
+  //   }
+  // }, [servers]);
 
   if (server) {
     console.log(server + "channel");
