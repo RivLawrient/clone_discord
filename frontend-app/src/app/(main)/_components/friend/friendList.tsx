@@ -175,7 +175,7 @@ export function FriendList(props: Props) {
           <div className="flex gap-2">
             {/* <HoverDetail label="Message" position="top"> */}
             <button
-              onClick={() => redirect("/channel/me/" + props.friend.username)}
+              // onClick={() => redirect("/channel/me/" + props.friend.username)}
               className="group/opt cursor-pointer rounded-full p-2 group-hover:bg-neutral-900"
             >
               <MessageCircleIcon className="size-5 fill-neutral-500 stroke-neutral-500 group-hover/opt:fill-white group-hover/opt:stroke-white" />

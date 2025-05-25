@@ -2,7 +2,7 @@
 import { useAuth } from "@/context/authContext";
 import { useFriend } from "@/context/friendContext";
 import { Server, useServer } from "@/context/serverContext";
-import { redirect, usePathname, useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { ReactNode, useEffect } from "react";
 
 export default function Layout(props: { children: ReactNode }) {
@@ -11,8 +11,8 @@ export default function Layout(props: { children: ReactNode }) {
   const { user } = useAuth();
   const path = usePathname().split("/");
   const router = useRouter();
+
   useEffect(() => {
-    console.log(servers);
     const socket = new WebSocket(process.env.WS_API_PUBLIC!);
 
     socket.onopen = () => {
@@ -33,7 +33,7 @@ export default function Layout(props: { children: ReactNode }) {
           const res = JSON.parse(data.data);
           // const users = res;
           const datas: Server = res.data;
-          console.log(res);
+          // console.log(res);
           if (datas) {
             setServers((p) =>
               p.map((v) =>
@@ -58,9 +58,8 @@ export default function Layout(props: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    console.log(servers);
     if (!servers.find((v) => v.id === path[2])) {
-      // redirect("/channels/me");
+      router.push("/channels/me");
     }
   }, [servers]);
   return (

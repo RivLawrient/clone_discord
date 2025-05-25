@@ -18,7 +18,7 @@ import {
   DialogTitle,
 } from "@radix-ui/react-dialog";
 import { CameraIcon, PlusIcon } from "lucide-react";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import {
   ChangeEvent,
   Dispatch,

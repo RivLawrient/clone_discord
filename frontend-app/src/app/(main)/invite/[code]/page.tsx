@@ -3,7 +3,7 @@
 import { Server, useServer } from "@/context/serverContext";
 import { Avatar, AvatarFallback, AvatarImage } from "@radix-ui/react-avatar";
 import Image from "next/image";
-import { redirect, usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 
 export default function Page() {
@@ -12,10 +12,11 @@ export default function Page() {
   const [loading, setLoading] = useState(true);
   const { servers, setServers } = useServer();
   const server = servers.find((v) => v.invite_code === path[2]);
+  const router = useRouter();
 
   useEffect(() => {
     if (server) {
-      redirect("/channels/" + server.id + "/" + server.channel);
+      router.push("/channels/" + server.id + "/" + server.channel);
     } else {
       fetch(`${process.env.HOST_API_PUBLIC}/api/server/invite/${path[2]}`, {
         method: "GET",
@@ -60,6 +61,7 @@ export default function Page() {
 function Modal(props: { data: Server }) {
   const { setServers } = useServer();
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const joinHandle = () => {
     setLoading(true);
@@ -76,7 +78,7 @@ function Modal(props: { data: Server }) {
         if (res.ok) {
           setServers((p) => [...p, data]);
           setTimeout(() => {
-            redirect(
+            router.push(
               "/channels/" + data.id + "/" + props.data.channel.text[0].id,
             );
           }, 1);
@@ -107,7 +109,7 @@ function Modal(props: { data: Server }) {
         Accept Invite
       </button>
       <button
-        onClick={() => redirect("/channels/me")}
+        onClick={() => router.push("/channels/me")}
         className="cursor-pointer pt-5 text-sm hover:underline"
       >
         No Thanks
@@ -118,9 +120,10 @@ function Modal(props: { data: Server }) {
 
 function NotFound() {
   const [count, setCount] = useState(3);
+  const router = useRouter();
   useEffect(() => {
     if (count <= 0) {
-      redirect("/"); // Redirect ke halaman utama
+      router.push("/"); // Redirect ke halaman utama
       return;
     }
 
@@ -129,7 +132,7 @@ function NotFound() {
     }, 1000);
 
     return () => clearTimeout(timer);
-  }, [count, redirect]);
+  }, [count, router]);
 
   return (
     <>

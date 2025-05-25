@@ -4,20 +4,10 @@ import HoverDetail from "../hoverDetail";
 import { CameraIcon, PlusCircleIcon, PlusIcon } from "lucide-react";
 import { Server } from "@/context/serverContext";
 import { TooltipTrigger } from "@radix-ui/react-tooltip";
-import { redirect, usePathname } from "next/navigation";
-import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogOverlay,
-  DialogPortal,
-  DialogTitle,
-  DialogTrigger,
-} from "@radix-ui/react-dialog";
+import { usePathname, useRouter } from "next/navigation";
+import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
 import ModalCreateServer from "./modalCreateServer";
 import { useState } from "react";
-import { AlertDialog, AlertDialogTrigger } from "@radix-ui/react-alert-dialog";
 
 interface Props {
   logo: "dm" | "add" | "server";
@@ -27,6 +17,7 @@ interface Props {
 export default function ServerBtn(props: Props) {
   const path = usePathname().split("/");
   const [modal, setModal] = useState(false);
+  const router = useRouter();
 
   return (
     <div className="relative flex h-10 w-full justify-center">
@@ -45,9 +36,13 @@ export default function ServerBtn(props: Props) {
         <Dialog onOpenChange={(v) => setModal(v)} open={modal}>
           <DialogTrigger asChild>
             <TooltipTrigger
+              disabled={
+                (path[2] === "me" && props.logo === "dm") ||
+                (props.server && path[2] === props.server.id)
+              }
               onClick={() =>
                 props.logo != "add" &&
-                redirect(
+                router.push(
                   "/channels/" +
                     (props.logo === "dm"
                       ? "me"

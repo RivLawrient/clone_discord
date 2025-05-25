@@ -14,8 +14,6 @@ export default function Layout(props: { children: ReactNode }) {
   const { user } = useAuth();
   const path = usePathname().split("/");
 
-  
-
   useEffect(() => {
     const socket = new WebSocket(process.env.WS_API_PUBLIC!);
 
