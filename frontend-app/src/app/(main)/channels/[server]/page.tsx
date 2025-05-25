@@ -8,11 +8,12 @@ export default function Page() {
   const server = servers.find((v) => v.id === path[2]);
 
   if (server) {
-    if (server.channel.text[0]) {
-      redirect(`/channels/${path[2]}/${server.channel.text[0].id}`);
-    }
+    // if (server.channel.text[0]) {
+    //   redirect(`/channels/${path[2]}/${server.channel.text[0].id}`);
+    // }
 
     return <div>not found</div>;
   }
+  return <div>lol</div>;
   // redirect("/channels/me");
 }
