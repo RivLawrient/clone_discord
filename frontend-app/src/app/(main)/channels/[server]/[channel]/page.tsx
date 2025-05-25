@@ -35,6 +35,6 @@ export default function Page() {
     }
   }
   // router.push("/channels/me");
-  // return <></>;
-  return redirect("/channels/me");
+  return <></>;
+  // return redirect("/channels/me");
 }
