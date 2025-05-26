@@ -31,5 +31,5 @@ export default function Page() {
   // } else {
   //   return <>{param.server}</>;
   // }
-  return <>dinami</>;
+  return <>dinamis</>;
 }
