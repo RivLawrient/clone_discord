@@ -23,7 +23,9 @@ export default function ServerBtn(props: {
       <Adds tooltip={props.tooltip} isSelect={props.isSelect}>
         <button
           disabled={selected}
-          onClick={() => props.destination && router.push(props.destination)}
+          onClick={() =>
+            props.destination ? router.push(props.destination) : null
+          }
           className={cn(
             "peer size-10 cursor-pointer overflow-hidden rounded-lg bg-neutral-800",
             selected ? "bg-indigo-500" : "transition-all hover:bg-indigo-500",
