@@ -2,12 +2,22 @@
 
 import { Server } from "@/context/serverContext";
 import { cn } from "@/lib/utils";
-import { ChevronDownIcon, XIcon } from "lucide-react";
-import { AlertDialog, DropdownMenu } from "radix-ui";
+import { DialogDescription } from "@radix-ui/react-dialog";
+import {
+  ChevronDownIcon,
+  ImageIcon,
+  LogOutIcon,
+  TextCursorIcon,
+  TextCursorInputIcon,
+  Trash2Icon,
+  UserPlusIcon,
+  XIcon,
+} from "lucide-react";
+import { AlertDialog, Dialog, DropdownMenu } from "radix-ui";
 
 export default function DropDownSideBarChannel(props: { server: Server }) {
   return (
-    <Adds>
+    <Adds server={props.server}>
       <button
         className={cn(
           "grid h-12 min-w-0 cursor-pointer grid-cols-[1fr_auto] items-center border-b border-neutral-700/70 px-4 outline-none hover:bg-neutral-800/40",
@@ -23,7 +33,7 @@ export default function DropDownSideBarChannel(props: { server: Server }) {
   );
 }
 
-function Adds(props: { children: React.ReactNode }) {
+function Adds(props: { children: React.ReactNode; server: Server }) {
   return (
     <AlertDialog.Root>
       <DropdownMenu.Root>
@@ -35,11 +45,34 @@ function Adds(props: { children: React.ReactNode }) {
               "flex min-w-[200px] flex-col gap-2 rounded-lg border border-neutral-700/70 bg-neutral-800 p-2 text-white",
             )}
           >
-            <DropdownMenu.Item>Change Icon</DropdownMenu.Item>
-            <DropdownMenu.Item>Rename</DropdownMenu.Item>
-            <DropdownMenu.Item>Invite Code</DropdownMenu.Item>
+            <InvitePeople>
+              <Items label="Invite People" onClick={() => {}}>
+                <UserPlusIcon size={20} />
+              </Items>
+            </InvitePeople>
+            {props.server.is_owner && (
+              <>
+                <Items label="Change Icon" onClick={() => {}}>
+                  <ImageIcon size={20} />
+                </Items>
+                <Items label="Rename" onClick={() => {}}>
+                  <TextCursorInputIcon size={20} />
+                </Items>
+              </>
+            )}
+
             <AlertDialog.Trigger asChild>
-              <DropdownMenu.Item>Delete</DropdownMenu.Item>
+              <Items
+                label={props.server.is_owner ? "Delete" : "Leave"}
+                onClick={() => {}}
+                clasName="text-red-500 hover:bg-red-500/10"
+              >
+                {props.server.is_owner ? (
+                  <Trash2Icon size={20} />
+                ) : (
+                  <LogOutIcon size={20} />
+                )}
+              </Items>
             </AlertDialog.Trigger>
           </DropdownMenu.Content>
         </DropdownMenu.Portal>
@@ -49,6 +82,28 @@ function Adds(props: { children: React.ReactNode }) {
         <ModalDeleteLeaveServer />
       </AlertDialog.Portal>
     </AlertDialog.Root>
+  );
+}
+
+function Items(props: {
+  disabled?: boolean;
+  label: string;
+  clasName?: string;
+  onClick: () => void;
+  children: React.ReactNode;
+}) {
+  return (
+    <DropdownMenu.Item
+      disabled={props.disabled}
+      onClick={props.onClick}
+      className={cn(
+        "grid w-full cursor-pointer grid-cols-[1fr_auto] rounded-sm p-1 text-sm font-semibold text-white outline-none hover:bg-neutral-700/50",
+        props.clasName,
+      )}
+    >
+      <span className="text-start">{props.label}</span>
+      {props.children}
+    </DropdownMenu.Item>
   );
 }
 
@@ -66,6 +121,25 @@ function ModalDeleteLeaveServer() {
         <AlertDialog.Cancel>cancel</AlertDialog.Cancel>
       </AlertDialog.Content>
     </>
+  );
+}
+
+function InvitePeople(props: { children: React.ReactNode }) {
+  return (
+    <Dialog.Root>
+      <Dialog.Trigger asChild>{props.children}</Dialog.Trigger>
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+        <Dialog.Content
+          className={cn(
+            "fixed top-1/2 left-1/2 z-50 flex w-[500px] -translate-x-1/2 -translate-y-1/2 flex-col rounded-lg border border-neutral-700/70 bg-neutral-800 p-4 px-6 text-white",
+          )}
+        >
+          <Dialog.Title>tesing</Dialog.Title>
+          <Dialog.Description></Dialog.Description>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
 
