@@ -1,101 +1,80 @@
-"use client";
-import { cn } from "@/lib/utils";
-import HoverDetail from "../hoverDetail";
-import { CameraIcon, PlusCircleIcon, PlusIcon } from "lucide-react";
 import { Server } from "@/context/serverContext";
-import { TooltipTrigger } from "@radix-ui/react-tooltip";
+import { cn } from "@/lib/utils";
+import { Dialog, Tooltip } from "radix-ui";
 import { usePathname, useRouter } from "next/navigation";
-import { Dialog, DialogTrigger } from "@radix-ui/react-dialog";
-import ModalCreateServer from "./modalCreateServer";
+import TooltipContent from "../tooltipContent";
+import ModalAddServer from "./modalAddServer";
 import { useState } from "react";
 
-interface Props {
-  logo: "dm" | "add" | "server";
+export default function ServerBtn(props: {
+  destination?: string;
   server?: Server;
-}
-
-export default function ServerBtn(props: Props) {
+  tooltip: string;
+  children?: React.ReactNode;
+  isSelect?: boolean;
+}) {
   const path = usePathname().split("/");
-  const [modal, setModal] = useState(false);
+  const selected =
+    props.isSelect && path[2] === props.destination?.split("/")[2];
   const router = useRouter();
 
   return (
-    <div className="relative flex h-10 w-full justify-center">
-      <HoverDetail
-        label={
-          props.logo === "dm"
-            ? "Direct Messages"
-            : props.logo === "add"
-              ? "Add a Server"
-              : props.server
-                ? props.server.name
-                : ""
-        }
-        position="right"
-      >
-        <Dialog onOpenChange={(v) => setModal(v)} open={modal}>
-          <DialogTrigger asChild>
-            <TooltipTrigger
-              disabled={
-                (path[2] === "me" && props.logo === "dm") ||
-                (props.server && path[2] === props.server.id)
-              }
-              onClick={() =>
-                props.logo != "add" &&
-                router.push(
-                  "/channels/" +
-                    (props.logo === "dm"
-                      ? "me"
-                      : props.logo === "server"
-                        ? props.server && props.server.channel.text[0]
-                          ? props.server.id +
-                            "/" +
-                            props.server.channel.text[0].id
-                          : props.server?.id
-                        : ""),
-                )
-              }
-              className={cn(
-                "group peer size-10 cursor-pointer overflow-hidden rounded-lg bg-neutral-800 hover:bg-indigo-500",
-                path[2] === "me" && props.logo === "dm"
-                  ? "bg-indigo-500"
-                  : props.server &&
-                      path[2] === props.server.id &&
-                      "bg-indigo-500",
-              )}
-            >
-              {props.logo === "dm" ? (
-                <img src="/dc.png" alt="" className="object-cover p-2" />
-              ) : props.logo === "add" ? (
-                <PlusCircleIcon className="m-auto fill-white stroke-neutral-800 group-hover:stroke-indigo-500" />
-              ) : props.server ? (
-                props.server.picture ? (
-                  <img
-                    src={process.env.HOST_API_PUBLIC + props.server.picture}
-                    alt=""
-                    className="size-full object-cover"
-                  />
-                ) : (
-                  <h1>{props.server.name[0].toUpperCase()}</h1>
-                )
-              ) : null}
-            </TooltipTrigger>
-          </DialogTrigger>
-          {props.logo === "add" && (
-            <ModalCreateServer modal={modal} setModal={setModal} />
+    <div className="relative flex h-10 justify-center">
+      <Adds tooltip={props.tooltip} isSelect={props.isSelect}>
+        <button
+          disabled={selected}
+          onClick={() => props.destination && router.push(props.destination)}
+          className={cn(
+            "peer size-10 cursor-pointer overflow-hidden rounded-lg bg-neutral-800",
+            selected ? "bg-indigo-500" : "transition-all hover:bg-indigo-500",
           )}
-        </Dialog>
-      </HoverDetail>
+        >
+          {props.server &&
+            (props.server.picture ? (
+              <img
+                src={process.env.HOST_API_PUBLIC + props.server.picture}
+                alt=""
+                className="size-10 object-cover"
+              />
+            ) : (
+              <>{props.server.name[0].toUpperCase()}</>
+            ))}
+          {props.children}
+        </button>
+      </Adds>
       <div
         className={cn(
-          "absolute left-0 self-center rounded-r-lg bg-white transition-all",
-          path[2] === "me" && props.logo === "dm"
-            ? "h-10 w-1"
-            : props.server && path[2] === props.server.id
-              ? "h-10 w-1"
-              : "size-0 peer-hover:h-5 peer-hover:w-1",
+          "absolute left-0 w-1 self-center rounded-r-lg bg-white transition-all",
+          selected ? "h-10" : "h-0 peer-hover:h-5",
         )}
       />
     </div>
+  );
+}
+
+function Adds(props: {
+  children: React.ReactNode;
+  tooltip: string;
+  isSelect?: boolean;
+}) {
+  const [modal, setModal] = useState(false);
+  return (
+    <Dialog.Root open={modal} onOpenChange={(v) => setModal(v)}>
+      <Tooltip.Provider disableHoverableContent delayDuration={0}>
+        <Tooltip.Root>
+          <Tooltip.Trigger asChild>
+            <Dialog.Trigger asChild>{props.children}</Dialog.Trigger>
+          </Tooltip.Trigger>
+          <Tooltip.Portal>
+            <TooltipContent position="right" label={props.tooltip} />
+          </Tooltip.Portal>
+        </Tooltip.Root>
+      </Tooltip.Provider>
+      {!props.isSelect && (
+        <Dialog.Portal>
+          <ModalAddServer modal={modal} setModal={setModal} />
+        </Dialog.Portal>
+      )}
+    </Dialog.Root>
   );
 }

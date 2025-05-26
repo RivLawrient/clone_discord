@@ -1,10 +1,11 @@
 "use client";
-import { useEffect } from "react";
-import InputForm from "../_components/inputForm";
-import SubmitBtnForm from "../_components/submitBtnForm";
-import useLogin, { FormLogin } from "./useLogin";
 
-export default function Page() {
+import { useEffect } from "react";
+import useLogin, { FormLogin } from "./useLogin";
+import SubmitBtnForm from "../_components/submitBtnForm";
+import InputForm from "../_components/inputForm";
+
+export default function LoginPage() {
   const { error, loading, setLoading, handleSubmit } = useLogin();
 
   useEffect(() => {

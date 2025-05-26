@@ -2,7 +2,11 @@ import { redirect } from "next/navigation";
 import { getUser } from "../../get-data/getUser";
 import Image from "next/image";
 
-export default async function Layout(props: { children: React.ReactNode }) {
+export default async function AuthLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const user = await getUser();
   if (user) {
     redirect("/");
@@ -18,9 +22,8 @@ export default async function Layout(props: { children: React.ReactNode }) {
         width={124}
         height={24}
         alt="logo discord name"
-        priority
       />
-      {props.children}
+      {children}
     </div>
   );
 }
