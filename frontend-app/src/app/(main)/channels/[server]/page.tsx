@@ -1,4 +1,4 @@
-"use client";
+// "use client";
 import { Server, useServer } from "@/context/serverContext";
 import getServer from "@/get-data/getServer";
 import { useParams } from "next/navigation";
@@ -25,10 +25,11 @@ import { useParams } from "next/navigation";
 // }
 
 export default function Page() {
-  const param = useParams();
-  if (param.server === "me") {
-    return <>me</>;
-  } else {
-    return <>{param.server}</>;
-  }
+  // const param = useParams();
+  // if (param.server === "me") {
+  //   return <>me</>;
+  // } else {
+  //   return <>{param.server}</>;
+  // }
+  return <>dinami</>;
 }
