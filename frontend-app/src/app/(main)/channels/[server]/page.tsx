@@ -1,5 +1,7 @@
+"use client";
 import { Server, useServer } from "@/context/serverContext";
 import getServer from "@/get-data/getServer";
+import { useParams } from "next/navigation";
 
 // export async function generateStaticParams() {
 //   const servers: Server[] | null = await fetch(
@@ -23,5 +25,10 @@ import getServer from "@/get-data/getServer";
 // }
 
 export default function Page() {
-  return <>server</>;
+  const param = useParams();
+  if (param.server === "me") {
+    return <>me</>;
+  } else {
+    return <>{param.server}</>;
+  }
 }
