@@ -1,26 +1,26 @@
 import { Server, useServer } from "@/context/serverContext";
 import getServer from "@/get-data/getServer";
 
-export async function generateStaticParams() {
-  const servers: Server[] | null = await fetch(
-    `${process.env.HOST_API_PUBLIC}/api/my_server`,
-    {
-      method: "GET",
-    },
-  )
-    .then(async (res) => {
-      if (res.ok) {
-        const data = await res.json();
-        return data.data;
-      }
-      return null;
-    })
-    .catch(() => null);
+// export async function generateStaticParams() {
+//   const servers: Server[] | null = await fetch(
+//     `${process.env.HOST_API_PUBLIC}/api/my_server`,
+//     {
+//       method: "GET",
+//     },
+//   )
+//     .then(async (res) => {
+//       if (res.ok) {
+//         const data = await res.json();
+//         return data.data;
+//       }
+//       return null;
+//     })
+//     .catch(() => null);
 
-  return (servers || []).map((v) => ({
-    server: v.id,
-  }));
-}
+//   return (servers || []).map((v) => ({
+//     server: v.id,
+//   }));
+// }
 
 export default function Page() {
   return <>server</>;
