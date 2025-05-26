@@ -16,7 +16,9 @@ export default function Header() {
       ) : (
         server && (
           <Avatar className="flex size-5 items-center justify-center overflow-hidden rounded-sm bg-indigo-500">
-            <AvatarImage src={process.env.HOST_API_PUBLIC + server.picture} />
+            {server.picture && (
+              <AvatarImage src={process.env.HOST_API_PUBLIC + server.picture} />
+            )}
             <AvatarFallback>{server.name[0].toUpperCase()}</AvatarFallback>
           </Avatar>
         )
