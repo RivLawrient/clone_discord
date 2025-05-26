@@ -102,7 +102,7 @@ class UserController extends Controller
         $update->is_online = true;
         $update->save();
 
-        new FriendController()->broadcast_friend($request->user);
+        // new FriendController()->broadcast_friend($request->user);
         
         return response()
         ->json([
@@ -123,7 +123,7 @@ class UserController extends Controller
         $update->is_online = false;
         $update->save();
 
-        new FriendController()->broadcast_friend($request->user);
+        // new FriendController()->broadcast_friend($request->user);
 
         return response()
         ->json([
