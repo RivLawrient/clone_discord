@@ -18,7 +18,7 @@ class ServerResource extends JsonResource
             'id' => $this->id,
             'name' => $this->name,
             'picture' =>  $this->picture,
-            'is_owner' => optional($this->myserver->where("user_id", $request->user)->first())->is_owner ?? false,
+            'is_owner' => boolval(optional($this->myserver->where("user_id", $request->user)->first())->is_owner ?? false),
             'invite_code' => $this->invite_code,
             'member' => $this->myserver->count(),
             'members' => FriendResource::collection($this->myserver->pluck("user")),
