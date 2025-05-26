@@ -5,8 +5,9 @@ import getFriend from "@/get-data/getFriend";
 import getServer from "@/get-data/getServer";
 import { getUser } from "@/get-data/getUser";
 import { redirect } from "next/navigation";
+import { ReactNode } from "react";
 
-export default async function Layout(props: { children: React.ReactNode }) {
+export default async function Layout(props: { children: ReactNode }) {
   const user = await getUser();
   if (!user) {
     redirect("/login");

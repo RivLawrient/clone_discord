@@ -1,6 +1,6 @@
 "use client";
 import SubmitBtnForm from "../_components/submitBtnForm";
-import userRegister from "./userRegister";
+import userRegister from "./useRegister";
 import InputForm from "../_components/inputForm";
 import { useEffect } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -16,7 +16,7 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 
-export default function RegisterPage() {
+export default function Page() {
   const { error, loading, setLoading, handleSubmit } = userRegister();
 
   useEffect(() => {

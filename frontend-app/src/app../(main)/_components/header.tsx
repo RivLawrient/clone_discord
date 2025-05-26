@@ -1,5 +1,4 @@
 "use client";
-
 import { useServer } from "@/context/serverContext";
 import { UsersIcon } from "lucide-react";
 import { usePathname } from "next/navigation";
@@ -16,13 +15,11 @@ export default function Header() {
         <UsersIcon className="size-5" />
       ) : (
         server && (
-          // <div className="flex size-5 items-center justify-center rounded-sm bg-indigo-500">
-          //   <span className="text-center">{server?.name[0]}</span>
-          // </div>
-
           <Avatar className="flex size-5 items-center justify-center overflow-hidden rounded-sm bg-indigo-500">
-            <AvatarImage src={process.env.HOST_API_PUBLIC + server.picture} />
-            <AvatarFallback>{server.name[0]}</AvatarFallback>
+            {server.picture && (
+              <AvatarImage src={process.env.HOST_API_PUBLIC + server.picture} />
+            )}
+            <AvatarFallback>{server.name[0].toUpperCase()}</AvatarFallback>
           </Avatar>
         )
       )}

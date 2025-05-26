@@ -1,14 +1,12 @@
 import { cn } from "@/lib/utils";
 
-interface Props {
+export default function InputForm(props: {
   label: string;
   type: string;
   error: string;
   isRequired: boolean;
   disabled: boolean;
-}
-
-export default function inputForm(props: Props) {
+}) {
   return (
     <div className="flex flex-col gap-2 pt-4">
       <label
