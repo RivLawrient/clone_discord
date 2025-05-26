@@ -31,8 +31,8 @@ export default function ServerBtn(props: {
             selected ? "bg-indigo-500" : "transition-all hover:bg-indigo-500",
           )}
         >
-          {props.server &&
-            (props.server.picture ? (
+          {props.server ? (
+            props.server.picture ? (
               <img
                 src={process.env.HOST_API_PUBLIC + props.server.picture}
                 alt=""
@@ -40,8 +40,10 @@ export default function ServerBtn(props: {
               />
             ) : (
               <>{props.server.name[0].toUpperCase()}</>
-            ))}
-          {props.children}
+            )
+          ) : (
+            props.children
+          )}
         </button>
       </Adds>
       <div
